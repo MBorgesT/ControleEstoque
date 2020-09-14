@@ -1,0 +1,6 @@
+tipoMovimentacao:
+    0: saida
+    1: saidaVenda
+    2: entreEstoques
+    3: entrada
+    4: entradaCompra
