@@ -13,7 +13,7 @@ import javax.swing.JTable;
 public class ProdutoValidator {
 
     public static boolean validate(JPanel panel) {
-        JTextField campoDescricao, campoUnidadeMedida, campoQuantidadeEmbalagem;
+        JTextField campoDescricao, campoUnidadeMedida, campoQuantidadeEmbalagem, campoValorPago, campoValorVenda;
         JRadioButton radioButtonSim, radioButtonNao;
         JScrollPane scrollPaneIngredientes;
         JTable tabelaIngredientes = null;
@@ -42,7 +42,11 @@ public class ProdutoValidator {
             }
         }
 
+        campoValorPago = (JTextField) componentMap.get("campoValorPago");
+        campoValorVenda = (JTextField) componentMap.get("campoValorVenda");
+
         return (validarCamposVazios(campoDescricao, campoUnidadeMedida, campoQuantidadeEmbalagem)
+                && validarValoresNumericos(campoQuantidadeEmbalagem, campoValorPago, campoValorVenda)
                 && validarRadioButtonSelecionado(radioButtonSim, radioButtonNao)
                 && validarQuantidadeRelativaTabelaIngredientes(tabelaIngredientes));
     }
@@ -63,6 +67,50 @@ public class ProdutoValidator {
         }
     }
 
+    private static boolean validarValoresNumericos(JTextField campoQuantidadeEmbalagem, JTextField campoValorPago, JTextField campoValorVenda) {
+        try {
+            AuxFunctions.valorStringParaFloat(campoQuantidadeEmbalagem.getText());
+        } catch (NumberFormatException e) {
+            AuxFunctions.popup(
+                    null,
+                    "Atenção",
+                    "O valor do campo de quantidade na embalagem está incorreto.",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return false;
+        }
+
+        if (!campoValorPago.getText().isEmpty()) {
+            try {
+                AuxFunctions.valorStringParaFloat(campoValorPago.getText());
+            } catch (NumberFormatException e) {
+                AuxFunctions.popup(
+                        null,
+                        "Atenção",
+                        "O valor do campo de valor pago está incorreto.",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return false;
+            }
+        }
+        
+        if (!campoValorVenda.getText().isEmpty()) {
+            try {
+                AuxFunctions.valorStringParaFloat(campoValorVenda.getText());
+            } catch (NumberFormatException e) {
+                AuxFunctions.popup(
+                        null,
+                        "Atenção",
+                        "O valor do campo de valor de venda está incorreto.",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private static boolean validarRadioButtonSelecionado(JRadioButton radioButtonSim, JRadioButton radioButtonNao) {
         if (radioButtonSim.isSelected() || radioButtonNao.isSelected()) {
             return true;
@@ -80,11 +128,10 @@ public class ProdutoValidator {
     private static boolean validarQuantidadeRelativaTabelaIngredientes(JTable tabelaIngredientes) {
         try {
             for (int i = 0; i < tabelaIngredientes.getRowCount(); i++) {
-                System.out.println(tabelaIngredientes.getValueAt(i, 2).toString());
                 AuxFunctions.valorStringParaFloat(tabelaIngredientes.getValueAt(i, 2).toString());
             }
             return true;
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             AuxFunctions.popup(
                     null,
                     "Atenção",

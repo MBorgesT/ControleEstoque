@@ -9,6 +9,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import models.Produto;
 import aux_functions.AuxFunctions;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import models.Ingrediente;
 import validators.ProdutoValidator;
 
@@ -27,7 +29,7 @@ public class NovoProduto extends javax.swing.JFrame {
 
         setRadioButtonsActionListeners();
         flipProduzidoPadaria(false);
-        
+
         tabelaIngredientes.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
 
@@ -56,6 +58,9 @@ public class NovoProduto extends javax.swing.JFrame {
 
         botaoAdicionarIngrediente.setEnabled(b);
         botaoRemoverIngrediente.setEnabled(b);
+        
+        campoTotalIngredientes.setEnabled(b);
+        botaoCalcularValorIngredientes.setEnabled(b);
 
         DefaultTableModel produtosCadastradosModel = (DefaultTableModel) tabelaProdutosCadastrados.getModel();
         if (b) {
@@ -105,9 +110,22 @@ public class NovoProduto extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel3 = new javax.swing.JLabel();
+        campoValorPago = new javax.swing.JTextField();
+        campoPorcentagemLucro = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        campoValorSugeridoVenda = new javax.swing.JTextField();
+        campoValorVenda = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        campoTotalIngredientes = new javax.swing.JTextField();
+        botaoCalcularValorIngredientes = new javax.swing.JButton();
+        botaoCalcularValorSugerido = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
-        botaoCancelar = new javax.swing.JButton();
         botaoCadastrar = new javax.swing.JButton();
+        botaoCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Novo Produto");
@@ -250,6 +268,49 @@ public class NovoProduto extends javax.swing.JFrame {
         jLabel17.setForeground(new java.awt.Color(255, 47, 52));
         jLabel17.setText("*");
 
+        jLabel3.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+        jLabel3.setText("Valor pago:");
+
+        campoValorPago.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        campoValorPago.setName("campoValorPago"); // NOI18N
+
+        campoPorcentagemLucro.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+
+        jLabel9.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+        jLabel9.setText("% de Lucro:");
+
+        jLabel10.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+        jLabel10.setText("<html>Valor de venda sugerido:</html>");
+
+        campoValorSugeridoVenda.setEditable(false);
+        campoValorSugeridoVenda.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+
+        campoValorVenda.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        campoValorVenda.setName("campoValorVenda"); // NOI18N
+
+        jLabel12.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+        jLabel12.setText("Valor de venda:");
+
+        jLabel13.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+        jLabel13.setText("Total (R$):");
+
+        campoTotalIngredientes.setEditable(false);
+        campoTotalIngredientes.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+
+        botaoCalcularValorIngredientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/calculadora_24.png"))); // NOI18N
+        botaoCalcularValorIngredientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoCalcularValorIngredientesActionPerformed(evt);
+            }
+        });
+
+        botaoCalcularValorSugerido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/calculadora_24.png"))); // NOI18N
+        botaoCalcularValorSugerido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoCalcularValorSugeridoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout formPanelLayout = new javax.swing.GroupLayout(formPanel);
         formPanel.setLayout(formPanelLayout);
         formPanelLayout.setHorizontalGroup(
@@ -257,6 +318,7 @@ public class NovoProduto extends javax.swing.JFrame {
             .addGroup(formPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1)
                     .addComponent(jSeparator2)
                     .addComponent(campoDescricao)
                     .addGroup(formPanelLayout.createSequentialGroup()
@@ -283,6 +345,11 @@ public class NovoProduto extends javax.swing.JFrame {
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel16))))
+                    .addGroup(formPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel17)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -297,14 +364,33 @@ public class NovoProduto extends javax.swing.JFrame {
                             .addComponent(botaoAdicionarIngrediente)
                             .addComponent(botaoRemoverIngrediente))
                         .addGap(18, 18, 18)
-                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8)))
-                    .addGroup(formPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                            .addComponent(jLabel8)
+                            .addGroup(formPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(campoTotalIngredientes)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(botaoCalcularValorIngredientes))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, formPanelLayout.createSequentialGroup()
+                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(campoValorPago, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(campoPorcentagemLucro, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(campoValorSugeridoVenda)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel17)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(botaoCalcularValorSugerido)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(campoValorVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12))))
                 .addContainerGap())
         );
         formPanelLayout.setVerticalGroup(
@@ -346,34 +432,59 @@ public class NovoProduto extends javax.swing.JFrame {
                                 .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel7)
                                     .addComponent(jLabel8))
-                                .addGap(18, 18, 18)
-                                .addComponent(campoBuscaProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(formPanelLayout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(campoBuscaProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(formPanelLayout.createSequentialGroup()
+                                        .addGap(8, 8, 8)
+                                        .addComponent(botaoCalcularValorIngredientes))
+                                    .addGroup(formPanelLayout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel13)
+                                            .addComponent(campoTotalIngredientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                             .addGroup(formPanelLayout.createSequentialGroup()
                                 .addGap(30, 30, 30)
                                 .addComponent(botaoBuscarProdutos)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(formPanelLayout.createSequentialGroup()
-                            .addComponent(botaoAdicionarIngrediente)
-                            .addGap(86, 86, 86)
-                            .addComponent(botaoRemoverIngrediente))))
+                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(formPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
+                            .addGroup(formPanelLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                    .addGroup(formPanelLayout.createSequentialGroup()
+                        .addComponent(botaoAdicionarIngrediente)
+                        .addGap(86, 86, 86)
+                        .addComponent(botaoRemoverIngrediente)))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(formPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(campoValorSugeridoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(formPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(campoPorcentagemLucro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(formPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(campoValorVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(formPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(campoValorPago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(botaoCalcularValorSugerido))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel11.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(255, 47, 52));
         jLabel11.setText("* Campos obrigatórios");
-
-        botaoCancelar.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        botaoCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cancel_36.png"))); // NOI18N
-        botaoCancelar.setText("Cancelar");
-        botaoCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botaoCancelarActionPerformed(evt);
-            }
-        });
 
         botaoCadastrar.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         botaoCadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ok_36.png"))); // NOI18N
@@ -384,22 +495,30 @@ public class NovoProduto extends javax.swing.JFrame {
             }
         });
 
+        botaoCancelar.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        botaoCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cancel_36.png"))); // NOI18N
+        botaoCancelar.setText("Cancelar");
+        botaoCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoCancelarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(formPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addComponent(jLabel1)
-                        .addGap(296, 296, 296)
-                        .addComponent(jLabel11)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel11))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(botaoCancelar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -415,12 +534,13 @@ public class NovoProduto extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(28, 28, 28)
                         .addComponent(jLabel11)))
-                .addGap(12, 12, 12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(formPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botaoCancelar)
-                    .addComponent(botaoCadastrar)))
+                    .addComponent(botaoCadastrar)
+                    .addComponent(botaoCancelar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -431,7 +551,7 @@ public class NovoProduto extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 615, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
         );
 
         pack();
@@ -515,7 +635,6 @@ public class NovoProduto extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) tabelaIngredientes.getModel();
             model.removeRow(selectedRow);
         }
-
     }//GEN-LAST:event_botaoRemoverIngredienteActionPerformed
 
     private void botaoCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCancelarActionPerformed
@@ -539,38 +658,43 @@ public class NovoProduto extends javax.swing.JFrame {
             if (reply == 0) {
                 Produto novoProduto = new Produto(
                         campoDescricao.getText().toUpperCase(),
+                        campoValorPago.getText().isEmpty() ? 0 : AuxFunctions.valorStringParaFloat(campoValorPago.getText()),
+                        campoValorVenda.getText().isEmpty() ? 0 : AuxFunctions.valorStringParaFloat(campoValorVenda.getText()),
                         campoUnidadeMedida.getText().toUpperCase(),
-                        AuxFunctions.valorStringParaFloat(campoQuantidadeEmbalagem.getText()), 
+                        AuxFunctions.valorStringParaFloat(campoQuantidadeEmbalagem.getText()),
                         radioButtonSim.isSelected()
                 );
-                
+
                 boolean flag;
-                if (radioButtonSim.isSelected() && tabelaIngredientes.getRowCount() == 0){
+                if (radioButtonSim.isSelected() && tabelaIngredientes.getRowCount() > 0) {
                     Ingrediente[] novosIngredientes = new Ingrediente[tabelaIngredientes.getRowCount()];
-                    for (int i = 0; i < tabelaIngredientes.getRowCount(); i++){
+                    for (int i = 0; i < tabelaIngredientes.getRowCount(); i++) {
                         novosIngredientes[i] = new Ingrediente(
                                 ingredientesNaTabela.get(i).getIdProduto(),
                                 AuxFunctions.valorStringParaFloat((String) tabelaIngredientes.getValueAt(i, 2))
                         );
                     }
-                    
-                    flag = ProdutoDAO.insertProduto(novoProduto);
+
+                    flag = ProdutoDAO.insertProduto(novoProduto, novosIngredientes);
                 } else {
                     flag = ProdutoDAO.insertProduto(novoProduto);
                 }
-                
-                if (flag){
+
+                if (flag) {
                     AuxFunctions.popup(
-                            this, 
+                            this,
                             "Cadastro de produto", "Produto cadastrado com sucesso.",
                             JOptionPane.INFORMATION_MESSAGE
                     );
-                    
+
+                    menuPrincipal.updateTodosProdutosCadastrados();
+                    menuPrincipal.preencherTabelaProdutosComTodosCadastrados();
+
                     this.dispose();
                 } else {
                     AuxFunctions.popup(
-                            this, 
-                            "Cadastro de produto", 
+                            this,
+                            "Cadastro de produto",
                             "Algum erro ocorreu ao cadastrar o produto. Favor reiniciar o programa e tentar novamente.",
                             JOptionPane.ERROR_MESSAGE
                     );
@@ -579,32 +703,97 @@ public class NovoProduto extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_botaoCadastrarActionPerformed
 
+    private void botaoCalcularValorIngredientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCalcularValorIngredientesActionPerformed
+        Produto ingrediente;
+        float valorTotal = 0, quantidadeRelativa;
+        boolean flag = true;
+
+        for (int i = 0; i < tabelaIngredientes.getRowCount(); i++) {
+            ingrediente = ingredientesNaTabela.get(i);
+
+            try {
+                quantidadeRelativa = AuxFunctions.valorStringParaFloat(tabelaIngredientes.getValueAt(i, 2).toString());
+
+                valorTotal += (quantidadeRelativa / ingrediente.getQuantidadeNaEmbalagem()) * ingrediente.getValorUnitarioPago();
+            } catch (NumberFormatException e) {
+                AuxFunctions.popup(this, "Atenção", "Algum valor na tabela de ingredientes está incorreto", JOptionPane.WARNING_MESSAGE);
+                flag = false;
+                break;
+            }
+
+            if (ingrediente.getValorUnitarioPago() == 0) {
+                AuxFunctions.popup(this, "Atenção", "Algum produto na tabela não tem seu valor pago definido.", JOptionPane.WARNING_MESSAGE);
+                flag = false;
+                break;
+            }
+        }
+
+        if (flag) {
+            campoTotalIngredientes.setText("R$ " + AuxFunctions.valorFloatParaString(valorTotal));
+        } else {
+            campoTotalIngredientes.setText("");
+        }
+    }//GEN-LAST:event_botaoCalcularValorIngredientesActionPerformed
+
+    private void botaoCalcularValorSugeridoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCalcularValorSugeridoActionPerformed
+        try {
+            float porcentagemLucro = AuxFunctions.valorStringParaFloat(campoPorcentagemLucro.getText());
+            float valorPago = AuxFunctions.valorStringParaFloat(campoValorPago.getText());
+
+            if (campoValorPago.getText().isEmpty()) {
+                campoValorSugeridoVenda.setText("");
+            } else {
+                campoValorSugeridoVenda.setText("R$ " + AuxFunctions.valorFloatParaString(valorPago + (valorPago * (porcentagemLucro / 100))));
+            }
+        } catch (NumberFormatException e) {
+            AuxFunctions.popup(
+                    this,
+                    "Atenção",
+                    "O valor no campo de porcentagem de lucro e/ou de valor pago está incorreto",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
+    }//GEN-LAST:event_botaoCalcularValorSugeridoActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoAdicionarIngrediente;
     private javax.swing.JButton botaoBuscarProdutos;
     private javax.swing.JButton botaoCadastrar;
+    private javax.swing.JButton botaoCalcularValorIngredientes;
+    private javax.swing.JButton botaoCalcularValorSugerido;
     private javax.swing.JButton botaoCancelar;
     private javax.swing.JButton botaoRemoverIngrediente;
     private javax.swing.JTextField campoBuscaProdutos;
     private javax.swing.JTextField campoDescricao;
+    private javax.swing.JTextField campoPorcentagemLucro;
     private javax.swing.JTextField campoQuantidadeEmbalagem;
+    private javax.swing.JTextField campoTotalIngredientes;
     private javax.swing.JTextField campoUnidadeMedida;
+    private javax.swing.JTextField campoValorPago;
+    private javax.swing.JTextField campoValorSugeridoVenda;
+    private javax.swing.JTextField campoValorVenda;
     private javax.swing.JPanel formPanel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.ButtonGroup produzidoPadariaButtonGroup;
     private javax.swing.JRadioButton radioButtonNao;

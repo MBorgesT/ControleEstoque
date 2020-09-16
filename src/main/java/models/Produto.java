@@ -22,6 +22,15 @@ public class Produto {
         this.produzidoNaPadaria = produzidoNaPadaria;
     }
 
+    public Produto(String descricao, float valorUnitarioPago, float valorUnitarioVenda, String unidadeDeMedida, float quantidadeNaEmbalagem, boolean produzidoNaPadaria) {
+        this.descricao = descricao;
+        this.valorUnitarioPago = valorUnitarioPago;
+        this.valorUnitarioVenda = valorUnitarioVenda;
+        this.unidadeDeMedida = unidadeDeMedida;
+        this.quantidadeNaEmbalagem = quantidadeNaEmbalagem;
+        this.produzidoNaPadaria = produzidoNaPadaria;
+    }
+
     public Produto(String descricao, String unidadeDeMedida, float quantidadeNaEmbalagem, boolean produzidoNaPadaria) {
         this.descricao = descricao;
         this.unidadeDeMedida = unidadeDeMedida;
@@ -37,10 +46,10 @@ public class Produto {
         return new Object[]{
             this.idProduto,
             this.descricao,
-            AuxFunctions.valorFloatParaString(this.valorUnitarioPago),
-            AuxFunctions.valorFloatParaString(this.valorUnitarioVenda),
-            this.unidadeDeMedida,
+            this.valorUnitarioPago == 0 ? "" : AuxFunctions.valorFloatParaString(this.valorUnitarioPago),
+            this.valorUnitarioVenda == 0 ? "" : AuxFunctions.valorFloatParaString(this.valorUnitarioVenda),
             this.quantidadeNaEmbalagem,
+            this.unidadeDeMedida,
             this.produzidoNaPadaria ? "SIM" : "NÃO"
         };
     }

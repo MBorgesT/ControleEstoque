@@ -4,3 +4,8 @@ tipoMovimentacao:
     2: entreEstoques
     3: entrada
     4: entradaCompra
+
+    
+categoria de InstanciaProduto:
+    0: estoque 
+    1: movimentacao

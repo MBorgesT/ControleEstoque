@@ -1,7 +1,10 @@
 package gui;
 
+import aux_functions.AuxFunctions;
 import dao.ProdutoDAO;
+import gui.produtos.MaisInfoProduto;
 import gui.produtos.NovoProduto;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import models.Produto;
 
@@ -12,7 +15,20 @@ public class MenuPrincipal extends javax.swing.JFrame {
     public MenuPrincipal() {
         initComponents();
         
+        updateTodosProdutosCadastrados();
         preencherTabelaProdutosComTodosCadastrados();
+    }
+    
+    public void updateTodosProdutosCadastrados() {
+        this.todosProdutosCadastrados = ProdutoDAO.selectTodosProdutos();
+    }
+    
+    public void preencherTabelaProdutosComTodosCadastrados() {
+        DefaultTableModel model = (DefaultTableModel) tabelaProdutos.getModel();
+        model.setRowCount(0);
+        for (Produto produto : this.todosProdutosCadastrados) {
+            model.addRow(produto.getMenuPrincipalTableRow());
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -84,10 +100,20 @@ public class MenuPrincipal extends javax.swing.JFrame {
         botaoMaisInfoProduto.setMaximumSize(new java.awt.Dimension(100, 50));
         botaoMaisInfoProduto.setMinimumSize(new java.awt.Dimension(100, 50));
         botaoMaisInfoProduto.setPreferredSize(new java.awt.Dimension(95, 42));
+        botaoMaisInfoProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoMaisInfoProdutoActionPerformed(evt);
+            }
+        });
 
         botaoBuscarProduto.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         botaoBuscarProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/search_24.png"))); // NOI18N
         botaoBuscarProduto.setText("Buscar");
+        botaoBuscarProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoBuscarProdutoActionPerformed(evt);
+            }
+        });
 
         botaoLimparBuscaProduto.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         botaoLimparBuscaProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eraser_24.png"))); // NOI18N
@@ -107,7 +133,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(botaoMaisInfoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(botaoMaisInfoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(botaoNovoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -510,15 +536,25 @@ public class MenuPrincipal extends javax.swing.JFrame {
         new NovoProduto(this).setVisible(true);
     }//GEN-LAST:event_botaoNovoProdutoActionPerformed
 
-    private void preencherTabelaProdutosComTodosCadastrados() {
-        this.todosProdutosCadastrados = ProdutoDAO.selectTodosProdutos();
+    private void botaoMaisInfoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoMaisInfoProdutoActionPerformed
+        int selectedRow = tabelaProdutos.getSelectedRow();
         
-        DefaultTableModel model = (DefaultTableModel) tabelaProdutos.getModel();
-        model.setRowCount(0);
-        for (Produto produto : this.todosProdutosCadastrados) {
-            model.addRow(produto.getMenuPrincipalTableRow());
+        if (selectedRow >= 0){
+            Produto produto = todosProdutosCadastrados[selectedRow];
+            new MaisInfoProduto(this, produto).setVisible(true);
+        } else {
+            AuxFunctions.popup(
+                    this, 
+                    "Atenção", "Favor selecionar um produto na tabela", 
+                    JOptionPane.WARNING_MESSAGE
+            );
         }
-    }
+    }//GEN-LAST:event_botaoMaisInfoProdutoActionPerformed
+
+    private void botaoBuscarProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarProdutoActionPerformed
+        
+    }//GEN-LAST:event_botaoBuscarProdutoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoBuscarProduto;
