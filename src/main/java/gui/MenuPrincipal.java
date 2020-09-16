@@ -2,6 +2,7 @@ package gui;
 
 import aux_functions.AuxFunctions;
 import dao.ProdutoDAO;
+import gui.produtos.BuscaProduto;
 import gui.produtos.MaisInfoProduto;
 import gui.produtos.NovoProduto;
 import javax.swing.JOptionPane;
@@ -10,23 +11,27 @@ import models.Produto;
 
 public class MenuPrincipal extends javax.swing.JFrame {
 
-    Produto[] todosProdutosCadastrados;
+    Produto[] produtosNaTabela;
 
     public MenuPrincipal() {
         initComponents();
         
-        updateTodosProdutosCadastrados();
-        preencherTabelaProdutosComTodosCadastrados();
+        setArrayProdutosTodosCadastrados();
+        preencherTabelaProdutos();
     }
     
-    public void updateTodosProdutosCadastrados() {
-        this.todosProdutosCadastrados = ProdutoDAO.selectTodosProdutos();
+    public void setArrayProdutosTodosCadastrados() {
+        this.produtosNaTabela = ProdutoDAO.selectTodosProdutos();
     }
     
-    public void preencherTabelaProdutosComTodosCadastrados() {
+    public void updateArrayProdutos(Produto[] novoArrayProdutos) {
+        this.produtosNaTabela = novoArrayProdutos;
+    }
+    
+    public void preencherTabelaProdutos() {
         DefaultTableModel model = (DefaultTableModel) tabelaProdutos.getModel();
         model.setRowCount(0);
-        for (Produto produto : this.todosProdutosCadastrados) {
+        for (Produto produto : this.produtosNaTabela) {
             model.addRow(produto.getMenuPrincipalTableRow());
         }
     }
@@ -118,6 +123,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
         botaoLimparBuscaProduto.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         botaoLimparBuscaProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eraser_24.png"))); // NOI18N
         botaoLimparBuscaProduto.setText("Limpar Busca");
+        botaoLimparBuscaProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLimparBuscaProdutoActionPerformed(evt);
+            }
+        });
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
@@ -540,7 +550,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         int selectedRow = tabelaProdutos.getSelectedRow();
         
         if (selectedRow >= 0){
-            Produto produto = todosProdutosCadastrados[selectedRow];
+            Produto produto = produtosNaTabela[selectedRow];
             new MaisInfoProduto(this, produto).setVisible(true);
         } else {
             AuxFunctions.popup(
@@ -552,8 +562,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoMaisInfoProdutoActionPerformed
 
     private void botaoBuscarProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarProdutoActionPerformed
-        
+        new BuscaProduto(this).setVisible(true);
     }//GEN-LAST:event_botaoBuscarProdutoActionPerformed
+
+    private void botaoLimparBuscaProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLimparBuscaProdutoActionPerformed
+        setArrayProdutosTodosCadastrados();
+        preencherTabelaProdutos();
+    }//GEN-LAST:event_botaoLimparBuscaProdutoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

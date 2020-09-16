@@ -7,7 +7,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
-    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -111,9 +111,9 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="checkBoxSim" min="-2" max="-2" attributes="0"/>
+                                          <Component id="checkBoxProduzidoNaPadariaSim" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="checkBoxNao" min="-2" max="-2" attributes="0"/>
+                                          <Component id="checkBoxProduzidoNaPadariaNao" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -135,8 +135,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="campoId" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="checkBoxSim" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="checkBoxNao" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="checkBoxProduzidoNaPadariaSim" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="checkBoxProduzidoNaPadariaNao" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="checkBoxDescricao" min="-2" max="-2" attributes="0"/>
@@ -170,19 +170,21 @@
                 <Property name="text" type="java.lang.String" value="Produzido na Padaria?"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="checkBoxSim">
+            <Component class="javax.swing.JCheckBox" name="checkBoxProduzidoNaPadariaSim">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Noto Sans" size="14" style="0"/>
                 </Property>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Sim"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="checkBoxNao">
+            <Component class="javax.swing.JCheckBox" name="checkBoxProduzidoNaPadariaNao">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Noto Sans" size="14" style="0"/>
                 </Property>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="N&#xe3;o"/>
               </Properties>
             </Component>
@@ -228,6 +230,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Cancelar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botaoCancelarActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

@@ -691,8 +691,8 @@ public class MaisInfoProduto extends javax.swing.JFrame {
                                 JOptionPane.INFORMATION_MESSAGE
                         );
 
-                        menuPrincipal.updateTodosProdutosCadastrados();
-                        menuPrincipal.preencherTabelaProdutosComTodosCadastrados();
+                        menuPrincipal.setArrayProdutosTodosCadastrados();
+                        menuPrincipal.preencherTabelaProdutos();
 
                         this.editando = false;
 
@@ -889,8 +889,8 @@ public class MaisInfoProduto extends javax.swing.JFrame {
                             JOptionPane.INFORMATION_MESSAGE
                     );
                     
-                    menuPrincipal.updateTodosProdutosCadastrados();
-                    menuPrincipal.preencherTabelaProdutosComTodosCadastrados();
+                    menuPrincipal.setArrayProdutosTodosCadastrados();
+                    menuPrincipal.preencherTabelaProdutos();
                     
                     this.dispose();
                 }

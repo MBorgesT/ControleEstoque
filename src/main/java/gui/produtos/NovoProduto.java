@@ -687,8 +687,8 @@ public class NovoProduto extends javax.swing.JFrame {
                             JOptionPane.INFORMATION_MESSAGE
                     );
 
-                    menuPrincipal.updateTodosProdutosCadastrados();
-                    menuPrincipal.preencherTabelaProdutosComTodosCadastrados();
+                    menuPrincipal.setArrayProdutosTodosCadastrados();
+                    menuPrincipal.preencherTabelaProdutos();
 
                     this.dispose();
                 } else {

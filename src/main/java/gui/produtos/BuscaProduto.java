@@ -1,18 +1,62 @@
-
 package gui.produtos;
 
+import aux_functions.AuxFunctions;
+import dao.ProdutoDAO;
 import gui.MenuPrincipal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import javax.swing.JOptionPane;
+import models.Produto;
 
 public class BuscaProduto extends javax.swing.JFrame {
-    
+
     private MenuPrincipal menuPrincipal;
 
     public BuscaProduto(MenuPrincipal menuPrincipal) {
         initComponents();
-        
+
         this.menuPrincipal = menuPrincipal;
     }
-    
+
+    private boolean validarCampos() {
+        if (checkBoxId.isSelected()) {
+
+            if (campoId.getText().isEmpty()) {
+                AuxFunctions.popup(
+                        this,
+                        "Atenção",
+                        "A opção de ID está selecionada e o campo está vazio.",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return false;
+            }
+
+            try {
+                Integer.parseInt(campoId.getText());
+            } catch (NumberFormatException e) {
+                AuxFunctions.popup(
+                        this,
+                        "Atenção",
+                        "O valor de ID está incorreto.",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return false;
+            }
+        }
+
+        if (checkBoxDescricao.isSelected() && campoDescricao.getText().isEmpty()) {
+            AuxFunctions.popup(
+                    this,
+                    "Atenção",
+                    "A opção de descrição está selecionada e o campo está vazio.",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return false;
+        }
+
+        return true;
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -23,8 +67,8 @@ public class BuscaProduto extends javax.swing.JFrame {
         campoId = new javax.swing.JTextField();
         campoDescricao = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        checkBoxSim = new javax.swing.JCheckBox();
-        checkBoxNao = new javax.swing.JCheckBox();
+        checkBoxProduzidoNaPadariaSim = new javax.swing.JCheckBox();
+        checkBoxProduzidoNaPadariaNao = new javax.swing.JCheckBox();
         checkBoxId = new javax.swing.JCheckBox();
         checkBoxDescricao = new javax.swing.JCheckBox();
         botaoBuscar = new javax.swing.JButton();
@@ -46,11 +90,13 @@ public class BuscaProduto extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         jLabel2.setText("Produzido na Padaria?");
 
-        checkBoxSim.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        checkBoxSim.setText("Sim");
+        checkBoxProduzidoNaPadariaSim.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        checkBoxProduzidoNaPadariaSim.setSelected(true);
+        checkBoxProduzidoNaPadariaSim.setText("Sim");
 
-        checkBoxNao.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        checkBoxNao.setText("Não");
+        checkBoxProduzidoNaPadariaNao.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        checkBoxProduzidoNaPadariaNao.setSelected(true);
+        checkBoxProduzidoNaPadariaNao.setText("Não");
 
         checkBoxId.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         checkBoxId.setText("ID");
@@ -75,9 +121,9 @@ public class BuscaProduto extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel2)
                                 .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(checkBoxSim)
+                                    .addComponent(checkBoxProduzidoNaPadariaSim)
                                     .addGap(18, 18, 18)
-                                    .addComponent(checkBoxNao)))))
+                                    .addComponent(checkBoxProduzidoNaPadariaNao)))))
                     .addComponent(checkBoxDescricao))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -91,8 +137,8 @@ public class BuscaProduto extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(campoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(checkBoxSim)
-                    .addComponent(checkBoxNao))
+                    .addComponent(checkBoxProduzidoNaPadariaSim)
+                    .addComponent(checkBoxProduzidoNaPadariaNao))
                 .addGap(18, 18, 18)
                 .addComponent(checkBoxDescricao)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -112,6 +158,11 @@ public class BuscaProduto extends javax.swing.JFrame {
         botaoCancelar.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         botaoCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cancel_36.png"))); // NOI18N
         botaoCancelar.setText("Cancelar");
+        botaoCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -155,11 +206,49 @@ public class BuscaProduto extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void botaoBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarActionPerformed
-        // TODO add your handling code here:
+        if (validarCampos()) {
+            Produto[] todosProdutosCadastrados = ProdutoDAO.selectTodosProdutos();
+            ArrayList<Produto> novosProdutosTabela = new ArrayList();
+            boolean flag;
+
+            for (Produto p : todosProdutosCadastrados) {
+                flag = true;
+                
+                if (checkBoxId.isSelected() && p.getIdProduto() != Integer.parseInt(campoId.getText())) {
+                    flag = false;
+                }
+
+                if (checkBoxDescricao.isSelected() && !p.getDescricao().contains(campoDescricao.getText().toUpperCase())) {
+                    flag = false;
+                }
+
+                if (!checkBoxProduzidoNaPadariaSim.isSelected() && p.isProduzidoNaPadaria()) {
+                    flag = false;
+                }
+
+                if (!checkBoxProduzidoNaPadariaNao.isSelected() && !p.isProduzidoNaPadaria()) {
+                    flag = false;
+                }
+                
+                if (flag){
+                    novosProdutosTabela.add(p);
+                }
+            }
+
+            menuPrincipal.updateArrayProdutos(novosProdutosTabela.toArray(new Produto[0]));
+            menuPrincipal.preencherTabelaProdutos();
+
+            this.dispose();
+        }
     }//GEN-LAST:event_botaoBuscarActionPerformed
+
+    private void botaoCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCancelarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_botaoCancelarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -169,8 +258,8 @@ public class BuscaProduto extends javax.swing.JFrame {
     private javax.swing.JTextField campoId;
     private javax.swing.JCheckBox checkBoxDescricao;
     private javax.swing.JCheckBox checkBoxId;
-    private javax.swing.JCheckBox checkBoxNao;
-    private javax.swing.JCheckBox checkBoxSim;
+    private javax.swing.JCheckBox checkBoxProduzidoNaPadariaNao;
+    private javax.swing.JCheckBox checkBoxProduzidoNaPadariaSim;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
