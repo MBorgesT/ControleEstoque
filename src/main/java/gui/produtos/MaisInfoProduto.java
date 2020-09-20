@@ -37,6 +37,7 @@ public class MaisInfoProduto extends javax.swing.JFrame {
         preencherCampos();
         setRadioButtonsActionListeners();
 
+        tabelaProdutosCadastrados.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tabelaIngredientes.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
 
@@ -903,7 +904,7 @@ public class MaisInfoProduto extends javax.swing.JFrame {
                 AuxFunctions.popup(
                         this,
                         "Atenção",
-                        "Este produto atualmente está cadastrado em algum estoque, portanto a exclusão não poderá ser realizada.\n" +
+                        "Este produto atualmente faz parte dos ingredientes de pelo menos um outro produto,\nportanto a exclusão não poderá ser realizada.\n" +
                         "Produtos:" + listaProdutos,
                         JOptionPane.WARNING_MESSAGE
                 );

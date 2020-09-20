@@ -1,38 +1,208 @@
 package gui;
 
 import aux_functions.AuxFunctions;
+import dao.EntradaProdutosDAO;
+import dao.EstoqueDAO;
+import dao.FornecedorDAO;
+import dao.InstanciaProdutoEstoqueDAO;
+import dao.MovimentacaoDAO;
 import dao.ProdutoDAO;
+import gui.estoques.MaisInfoEstoque;
+import gui.estoques.NovoEstoque;
+import gui.fornecedores.MaisInfoFornecedor;
+import gui.fornecedores.NovoFornecedor;
+import gui.movimentacoes.OpcoesNovaMovimentacao;
 import gui.produtos.BuscaProduto;
 import gui.produtos.MaisInfoProduto;
 import gui.produtos.NovoProduto;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import models.EntradaProdutos;
+import models.Estoque;
+import models.Fornecedor;
+import models.InstanciaProdutoEstoque;
+import models.Movimentacao;
 import models.Produto;
+import models.SaidaProdutos;
 
 public class MenuPrincipal extends javax.swing.JFrame {
 
-    Produto[] produtosNaTabela;
+    private Produto[] produtosNaTabela;
+
+    private Fornecedor[] fornecedoresNoComboBox;
+    private EntradaProdutos[] comprasNaTabelaFornecedores;
+
+    private Estoque[] estoquesNoComboBox;
+    private InstanciaProdutoEstoque[] instanciasProdutoEstoqueNaTabela;
+    private Movimentacao[] movimentacoesNaTabela;
 
     public MenuPrincipal() {
         initComponents();
-        
+
+        //============== Produtos ==============
         setArrayProdutosTodosCadastrados();
         preencherTabelaProdutos();
+
+        //============= Fornecedores ===========
+        setArrayFornecedoresTodosCadastrados();
+        preencherComboBoxFornecedores();
+
+        setArrayFornecedorComprasTodasCadastradas();
+        preencherTabelaFornecedorCompras();
+
+        createFornecedoresComboBoxListener();
+
+        //============== Estoques ==============
+        setArrayEstoquesTodosCadastrados();
+        preencherComboBoxEstoques();
+
+        setArrayInstanciasProdutoEstoqueTodosCadastrados();
+        preencherTabelaInstanciasProdutoEstoque();
+
+        setArrayMovimentacoesTodasCadastradas();
+        preencherTabelaMovimentacoes();
+
+        createEstoquesComboBoxListener();
     }
-    
+
+    //====================== Listeners ===========================//
+    private void createFornecedoresComboBoxListener() {
+        comboBoxFornecedor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                int selectedIndex = comboBoxFornecedor.getSelectedIndex();
+
+                if (selectedIndex <= 0) {
+                    setArrayFornecedorComprasTodasCadastradas();
+                } else {
+                    Fornecedor fornecedorSelecionado = fornecedoresNoComboBox[selectedIndex - 1];
+                    updateArrayFornecedorCompras(EntradaProdutosDAO.selectComprasPorIdFornecedor(fornecedorSelecionado.getIdFornecedor()));
+                }
+
+                preencherTabelaFornecedorCompras();
+            }
+        });
+    }
+
+    private void createEstoquesComboBoxListener() {
+        comboBoxEstoque.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                int selectedIndex = comboBoxEstoque.getSelectedIndex();
+
+                if (selectedIndex <= 0) {
+                    setArrayInstanciasProdutoEstoqueTodosCadastrados();
+
+                    setArrayMovimentacoesTodasCadastradas();
+                } else {
+                    Estoque estoqueSelecionado = estoquesNoComboBox[selectedIndex - 1];
+
+                    updateArrayInstanciasProdutoEstoque(InstanciaProdutoEstoqueDAO.getInstanciasProdutoEstoquePorIdEstoque(estoqueSelecionado.getIdEstoque()));
+
+                    updateArrayMovimentacoes(MovimentacaoDAO.selectMovimentacoesPorEstoque(estoqueSelecionado.getIdEstoque()));
+                }
+
+                preencherTabelaInstanciasProdutoEstoque();
+                preencherTabelaMovimentacoes();
+            }
+        });
+    }
+
+    //======================= Produtos ===========================//
     public void setArrayProdutosTodosCadastrados() {
         this.produtosNaTabela = ProdutoDAO.selectTodosProdutos();
     }
-    
+
     public void updateArrayProdutos(Produto[] novoArrayProdutos) {
         this.produtosNaTabela = novoArrayProdutos;
     }
-    
+
     public void preencherTabelaProdutos() {
         DefaultTableModel model = (DefaultTableModel) tabelaProdutos.getModel();
         model.setRowCount(0);
         for (Produto produto : this.produtosNaTabela) {
             model.addRow(produto.getMenuPrincipalTableRow());
+        }
+    }
+
+    //====================== Fornecedores ========================//
+    public void setArrayFornecedoresTodosCadastrados() {
+        this.fornecedoresNoComboBox = FornecedorDAO.selectTodosFornecedores();
+    }
+
+    public void preencherComboBoxFornecedores() {
+        comboBoxFornecedor.removeAllItems();
+
+        comboBoxFornecedor.addItem("TODOS FORNECEDORES");
+        for (Fornecedor fornecedor : fornecedoresNoComboBox) {
+            comboBoxFornecedor.addItem(fornecedor.getDescricao());
+        }
+    }
+
+    private void setArrayFornecedorComprasTodasCadastradas() {
+        this.comprasNaTabelaFornecedores = EntradaProdutosDAO.selectTodasCompras();
+    }
+
+    public void updateArrayFornecedorCompras(EntradaProdutos[] compras) {
+        this.comprasNaTabelaFornecedores = compras;
+    }
+
+    public void preencherTabelaFornecedorCompras() {
+        DefaultTableModel model = (DefaultTableModel) tabelaFornecedorCompras.getModel();
+        model.setRowCount(0);
+
+        for (EntradaProdutos compra : this.comprasNaTabelaFornecedores) {
+            model.addRow(compra.getCompraFornecedoresTableRow());
+        }
+    }
+
+    //======================== Estoques ==========================//
+    public void setArrayEstoquesTodosCadastrados() {
+        this.estoquesNoComboBox = EstoqueDAO.selectTodosEstoques();
+    }
+
+    public void preencherComboBoxEstoques() {
+        comboBoxEstoque.removeAllItems();
+
+        comboBoxEstoque.addItem("TODOS ESTOQUES");
+        for (Estoque estoque : estoquesNoComboBox) {
+            comboBoxEstoque.addItem(estoque.getDescricao());
+        }
+    }
+
+    public void setArrayInstanciasProdutoEstoqueTodosCadastrados() {
+        this.instanciasProdutoEstoqueNaTabela = InstanciaProdutoEstoqueDAO.getTodasInstanciasProdutoEstoque();
+    }
+
+    public void updateArrayInstanciasProdutoEstoque(InstanciaProdutoEstoque[] instancias) {
+        this.instanciasProdutoEstoqueNaTabela = instancias;
+    }
+
+    public void preencherTabelaInstanciasProdutoEstoque() {
+        DefaultTableModel model = (DefaultTableModel) tabelaInstanciasProdutoEstoque.getModel();
+        model.setRowCount(0);
+
+        for (InstanciaProdutoEstoque instancia : this.instanciasProdutoEstoqueNaTabela) {
+            model.addRow(instancia.getInstanciasProdutoEstoqueTableRow());
+        }
+    }
+
+    public void setArrayMovimentacoesTodasCadastradas() {
+        this.movimentacoesNaTabela = MovimentacaoDAO.selectTodasMovimentacoes();
+    }
+
+    public void updateArrayMovimentacoes(Movimentacao[] movimentacoes) {
+        this.movimentacoesNaTabela = movimentacoes;
+    }
+
+    public void preencherTabelaMovimentacoes() {
+        DefaultTableModel model = (DefaultTableModel) tabelaMovimentacoes.getModel();
+        model.setRowCount(0);
+
+        for (Movimentacao movimentacao : this.movimentacoesNaTabela) {
+            model.addRow(movimentacao.getMovimentacaoTableRow());
         }
     }
 
@@ -54,30 +224,30 @@ public class MenuPrincipal extends javax.swing.JFrame {
         fornecedoresPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        botaoNovoFornecedor = new javax.swing.JButton();
+        botaoMaisInfoFornecedor = new javax.swing.JButton();
+        comboBoxFornecedor = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jTable6 = new javax.swing.JTable();
+        tabelaFornecedorCompras = new javax.swing.JTable();
         estoquesPanel = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        comboBoxEstoque = new javax.swing.JComboBox<>();
+        botaoMaisInfoEstoque = new javax.swing.JButton();
+        botaoNovoEstoque = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel4 = new javax.swing.JLabel();
         jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
+        botaoNovaMovimentacao = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tabelaInstanciasProdutoEstoque = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTable5 = new javax.swing.JTable();
+        tabelaMovimentacoes = new javax.swing.JTable();
         relatorioPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -227,16 +397,25 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         jLabel10.setText("Fornecedor:");
 
-        jButton2.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/adicionar_24.png"))); // NOI18N
-        jButton2.setText("Novo");
+        botaoNovoFornecedor.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        botaoNovoFornecedor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/adicionar_24.png"))); // NOI18N
+        botaoNovoFornecedor.setText("Novo");
+        botaoNovoFornecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoNovoFornecedorActionPerformed(evt);
+            }
+        });
 
-        jButton11.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mais_info_24.png"))); // NOI18N
-        jButton11.setText("Mais Info");
+        botaoMaisInfoFornecedor.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        botaoMaisInfoFornecedor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mais_info_24.png"))); // NOI18N
+        botaoMaisInfoFornecedor.setText("Mais Info");
+        botaoMaisInfoFornecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoMaisInfoFornecedorActionPerformed(evt);
+            }
+        });
 
-        jComboBox1.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboBoxFornecedor.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -246,11 +425,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboBoxFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jButton11)
+                .addComponent(botaoMaisInfoFornecedor)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(botaoNovoFornecedor)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -259,24 +438,22 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(botaoMaisInfoFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(botaoNovoFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(comboBoxFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel11.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         jLabel11.setText("Compras com o Fornecedor:");
 
-        jTable6.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaFornecedorCompras.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        tabelaFornecedorCompras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "Fornecedor", "Data e Hora", "Valor Total", "Estoque de Destino", "Produtos"
@@ -290,13 +467,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane6.setViewportView(jTable6);
-        if (jTable6.getColumnModel().getColumnCount() > 0) {
-            jTable6.getColumnModel().getColumn(0).setPreferredWidth(130);
-            jTable6.getColumnModel().getColumn(1).setPreferredWidth(120);
-            jTable6.getColumnModel().getColumn(2).setPreferredWidth(70);
-            jTable6.getColumnModel().getColumn(3).setPreferredWidth(110);
-            jTable6.getColumnModel().getColumn(4).setPreferredWidth(500);
+        jScrollPane6.setViewportView(tabelaFornecedorCompras);
+        if (tabelaFornecedorCompras.getColumnModel().getColumnCount() > 0) {
+            tabelaFornecedorCompras.getColumnModel().getColumn(0).setPreferredWidth(130);
+            tabelaFornecedorCompras.getColumnModel().getColumn(1).setPreferredWidth(120);
+            tabelaFornecedorCompras.getColumnModel().getColumn(2).setPreferredWidth(70);
+            tabelaFornecedorCompras.getColumnModel().getColumn(3).setPreferredWidth(110);
+            tabelaFornecedorCompras.getColumnModel().getColumn(4).setPreferredWidth(500);
         }
 
         javax.swing.GroupLayout fornecedoresPanelLayout = new javax.swing.GroupLayout(fornecedoresPanel);
@@ -333,16 +510,25 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         jLabel3.setText("Estoque:");
 
-        jComboBox2.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboBoxEstoque.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
 
-        jButton3.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mais_info_24.png"))); // NOI18N
-        jButton3.setText("Mais Info");
+        botaoMaisInfoEstoque.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        botaoMaisInfoEstoque.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mais_info_24.png"))); // NOI18N
+        botaoMaisInfoEstoque.setText("Mais Info");
+        botaoMaisInfoEstoque.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoMaisInfoEstoqueActionPerformed(evt);
+            }
+        });
 
-        jButton4.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/adicionar_24.png"))); // NOI18N
-        jButton4.setText("Novo");
+        botaoNovoEstoque.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        botaoNovoEstoque.setIcon(new javax.swing.ImageIcon(getClass().getResource("/adicionar_24.png"))); // NOI18N
+        botaoNovoEstoque.setText("Novo");
+        botaoNovoEstoque.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoNovoEstoqueActionPerformed(evt);
+            }
+        });
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
@@ -353,9 +539,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/search_24.png"))); // NOI18N
         jButton8.setText("Buscar");
 
-        jButton9.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/move_24.png"))); // NOI18N
-        jButton9.setText("Movimentar");
+        botaoNovaMovimentacao.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        botaoNovaMovimentacao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/move_24.png"))); // NOI18N
+        botaoNovaMovimentacao.setText("Movimentar");
+        botaoNovaMovimentacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoNovaMovimentacaoActionPerformed(evt);
+            }
+        });
 
         jButton10.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mais_info_24.png"))); // NOI18N
@@ -373,55 +564,57 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboBoxEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jButton3)
+                .addComponent(botaoMaisInfoEstoque)
                 .addGap(18, 18, 18)
-                .addComponent(jButton4)
+                .addComponent(botaoNovoEstoque)
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton9)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jButton8)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton14)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton10)
+                        .addGap(18, 18, 18)
+                        .addComponent(botaoNovaMovimentacao)))
+                .addContainerGap(129, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator2)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(8, 8, 8)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(botaoNovaMovimentacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(24, 24, 24)
+                        .addComponent(comboBoxEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(botaoMaisInfoEstoque, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(botaoNovoEstoque, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        jTable2.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaInstanciasProdutoEstoque.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        tabelaInstanciasProdutoEstoque.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Estoque", "Produto", "Quantidade", "Valor"
+                "Estoque", "Produto", "Quantidade", "Valor Total"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -432,31 +625,29 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable2.setAutoscrolls(false);
-        jTable2.setPreferredSize(new java.awt.Dimension(250, 72));
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setPreferredWidth(260);
-            jTable2.getColumnModel().getColumn(1).setPreferredWidth(360);
-            jTable2.getColumnModel().getColumn(2).setPreferredWidth(90);
-            jTable2.getColumnModel().getColumn(3).setPreferredWidth(125);
+        tabelaInstanciasProdutoEstoque.setAutoscrolls(false);
+        tabelaInstanciasProdutoEstoque.setPreferredSize(new java.awt.Dimension(250, 72));
+        jScrollPane2.setViewportView(tabelaInstanciasProdutoEstoque);
+        if (tabelaInstanciasProdutoEstoque.getColumnModel().getColumnCount() > 0) {
+            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(0).setPreferredWidth(260);
+            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(1).setPreferredWidth(360);
+            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(2).setPreferredWidth(90);
+            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(3).setPreferredWidth(125);
         }
 
         jLabel7.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         jLabel7.setText("Produtos no Estoque:");
 
         jLabel9.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
-        jLabel9.setText("Movimentações Internas:");
+        jLabel9.setText("Movimentações:");
 
-        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaMovimentacoes.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        tabelaMovimentacoes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
-                "Data e Hora", "Tipo de Movimentação", "Valor Total", "Estoque Origem", "Estoque Destino", "Produtos"
+                "Data", "Tipo de Movimentação", "Valor Total", "Estoque Origem", "Estoque Destino", "Produtos"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -467,15 +658,15 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable5.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        jScrollPane5.setViewportView(jTable5);
-        if (jTable5.getColumnModel().getColumnCount() > 0) {
-            jTable5.getColumnModel().getColumn(0).setPreferredWidth(140);
-            jTable5.getColumnModel().getColumn(1).setPreferredWidth(150);
-            jTable5.getColumnModel().getColumn(2).setPreferredWidth(75);
-            jTable5.getColumnModel().getColumn(3).setPreferredWidth(180);
-            jTable5.getColumnModel().getColumn(4).setPreferredWidth(180);
-            jTable5.getColumnModel().getColumn(5).setPreferredWidth(500);
+        tabelaMovimentacoes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jScrollPane5.setViewportView(tabelaMovimentacoes);
+        if (tabelaMovimentacoes.getColumnModel().getColumnCount() > 0) {
+            tabelaMovimentacoes.getColumnModel().getColumn(0).setPreferredWidth(100);
+            tabelaMovimentacoes.getColumnModel().getColumn(1).setPreferredWidth(200);
+            tabelaMovimentacoes.getColumnModel().getColumn(2).setPreferredWidth(75);
+            tabelaMovimentacoes.getColumnModel().getColumn(3).setPreferredWidth(180);
+            tabelaMovimentacoes.getColumnModel().getColumn(4).setPreferredWidth(180);
+            tabelaMovimentacoes.getColumnModel().getColumn(5).setPreferredWidth(500);
         }
 
         javax.swing.GroupLayout estoquesPanelLayout = new javax.swing.GroupLayout(estoquesPanel);
@@ -499,7 +690,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             estoquesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(estoquesPanelLayout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -531,11 +722,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1280, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(tabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 1280, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tabbedPane)
+                .addContainerGap())
         );
 
         pack();
@@ -548,14 +742,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     private void botaoMaisInfoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoMaisInfoProdutoActionPerformed
         int selectedRow = tabelaProdutos.getSelectedRow();
-        
-        if (selectedRow >= 0){
+
+        if (selectedRow >= 0) {
             Produto produto = produtosNaTabela[selectedRow];
             new MaisInfoProduto(this, produto).setVisible(true);
         } else {
             AuxFunctions.popup(
-                    this, 
-                    "Atenção", "Favor selecionar um produto na tabela", 
+                    this,
+                    "Atenção", "Favor selecionar um produto na tabela",
                     JOptionPane.WARNING_MESSAGE
             );
         }
@@ -570,24 +764,64 @@ public class MenuPrincipal extends javax.swing.JFrame {
         preencherTabelaProdutos();
     }//GEN-LAST:event_botaoLimparBuscaProdutoActionPerformed
 
+    private void botaoNovoFornecedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoNovoFornecedorActionPerformed
+        new NovoFornecedor(this).setVisible(true);
+    }//GEN-LAST:event_botaoNovoFornecedorActionPerformed
+
+    private void botaoMaisInfoFornecedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoMaisInfoFornecedorActionPerformed
+        int selectedIndex = comboBoxFornecedor.getSelectedIndex();
+        if (selectedIndex == 0) {
+            AuxFunctions.popup(
+                    this,
+                    "Atenção",
+                    "Favor selecionar um fornecedor na caixa de seleção.",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        } else {
+            new MaisInfoFornecedor(this, fornecedoresNoComboBox[selectedIndex - 1]).setVisible(true);
+        }
+    }//GEN-LAST:event_botaoMaisInfoFornecedorActionPerformed
+
+    private void botaoNovoEstoqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoNovoEstoqueActionPerformed
+        new NovoEstoque(this).setVisible(true);
+    }//GEN-LAST:event_botaoNovoEstoqueActionPerformed
+
+    private void botaoMaisInfoEstoqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoMaisInfoEstoqueActionPerformed
+        int selectedIndex = comboBoxEstoque.getSelectedIndex();
+        if (selectedIndex == 0) {
+            AuxFunctions.popup(
+                    this,
+                    "Atenção",
+                    "Favor selecionar um estoque na caixa de seleção.",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        } else {
+            new MaisInfoEstoque(this, estoquesNoComboBox[selectedIndex - 1]).setVisible(true);
+        }
+    }//GEN-LAST:event_botaoMaisInfoEstoqueActionPerformed
+
+    private void botaoNovaMovimentacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoNovaMovimentacaoActionPerformed
+        new OpcoesNovaMovimentacao(this).setVisible(true);
+    }//GEN-LAST:event_botaoNovaMovimentacaoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoBuscarProduto;
     private javax.swing.JButton botaoLimparBuscaProduto;
+    private javax.swing.JButton botaoMaisInfoEstoque;
+    private javax.swing.JButton botaoMaisInfoFornecedor;
     private javax.swing.JButton botaoMaisInfoProduto;
+    private javax.swing.JButton botaoNovaMovimentacao;
+    private javax.swing.JButton botaoNovoEstoque;
+    private javax.swing.JButton botaoNovoFornecedor;
     private javax.swing.JButton botaoNovoProduto;
+    private javax.swing.JComboBox<String> comboBoxEstoque;
+    private javax.swing.JComboBox<String> comboBoxFornecedor;
     private javax.swing.JPanel estoquesPanel;
     private javax.swing.JPanel fornecedoresPanel;
     private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton14;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -604,12 +838,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable5;
-    private javax.swing.JTable jTable6;
     private javax.swing.JPanel produtosPanel;
     private javax.swing.JPanel relatorioPanel;
     private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JTable tabelaFornecedorCompras;
+    private javax.swing.JTable tabelaInstanciasProdutoEstoque;
+    private javax.swing.JTable tabelaMovimentacoes;
     private javax.swing.JTable tabelaProdutos;
     // End of variables declaration//GEN-END:variables
 }

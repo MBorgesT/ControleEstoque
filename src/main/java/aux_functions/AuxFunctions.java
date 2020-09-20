@@ -1,14 +1,10 @@
 package aux_functions;
 
+import java.text.SimpleDateFormat;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class AuxFunctions {
-
-    private JFrame frame;
-    private String title;
-    private String message;
-    private int option; //0: information; 1: warning; 2: error
 
     public static void popup(JFrame frame, String title, String message, int option) {
         JOptionPane.showMessageDialog(
@@ -36,6 +32,22 @@ public class AuxFunctions {
         String novoValor = String.format("%.02f", valor);
         novoValor = novoValor.replace('.', ',');
         return novoValor;
+    }
+    
+    public static java.sql.Date convertUtilToSql(java.util.Date uDate) {
+        java.sql.Date sDate = new java.sql.Date(uDate.getTime());
+        return sDate;
+    }
+    
+    /*
+    public static java.util.Date convertSqlToUtil(java.sql.Date sDate) {
+        return java.util.Date(sDate.getTime());
+    }
+*/
+    
+    public static String formatData(java.util.Date data) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(data);
     }
 
 }

@@ -60,6 +60,14 @@ public class Produto {
             this.unidadeDeMedida
         };
     }
+    
+    public Object[] getCadastroEntradaTableRow() {
+        return new Object[]{
+            this.descricao,
+            AuxFunctions.valorFloatParaString(this.quantidadeNaEmbalagem),
+            this.unidadeDeMedida
+        };
+    }
 
     public int getIdProduto() {
         return idProduto;

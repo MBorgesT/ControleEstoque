@@ -9,8 +9,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import models.Produto;
 import aux_functions.AuxFunctions;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import models.Ingrediente;
 import validators.ProdutoValidator;
 
@@ -30,6 +28,7 @@ public class NovoProduto extends javax.swing.JFrame {
         setRadioButtonsActionListeners();
         flipProduzidoPadaria(false);
 
+        tabelaProdutosCadastrados.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tabelaIngredientes.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
 
@@ -535,12 +534,12 @@ public class NovoProduto extends javax.swing.JFrame {
                         .addGap(28, 28, 28)
                         .addComponent(jLabel11)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(formPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(formPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botaoCadastrar)
-                    .addComponent(botaoCancelar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(botaoCancelar)
+                    .addComponent(botaoCadastrar))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

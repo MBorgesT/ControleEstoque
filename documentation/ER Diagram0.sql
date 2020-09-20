@@ -47,7 +47,7 @@ CREATE TABLE InstanciaProduto (
  idInstanciaProduto INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
  idProduto INTEGER NOT NULL,
  quantidade INTEGER NOT NULL,
- valorUnitarioPago REAL NOT NULL,
+ valorUnitarioPago REAL,
  idMovimentacao INTEGER,
  idEstoque INTEGER
 );

@@ -1,0 +1,9 @@
+alterar o sistema de alert das operações no banco pra não dar problemas em retornos booleanos
+
+concertar o o problema de conversão de localdatetime para sql datetime
+
+
+
+DONE -validador de entrada precisa ser alterado
+
+DONE - corrigir o protótipo de cadastro, uma vez que não considerei que é possível que não seja cadastrado novos valores unitários de produtos quando a movimentação não for de compra
