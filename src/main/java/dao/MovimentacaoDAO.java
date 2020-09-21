@@ -34,7 +34,7 @@ public class MovimentacaoDAO {
                         movimentacao = new SaidaProdutos(
                                 rs.getInt("idEstoqueOrigem"),
                                 rs.getInt("idMovimentacao"),
-                                rs.getDate("dataHora"),
+                                rs.getDate("data"),
                                 rs.getInt("tipoMovimentacao")
                         );
                         break;
@@ -42,7 +42,7 @@ public class MovimentacaoDAO {
                         movimentacao = new SaidaProdutos(
                                 rs.getInt("idEstoqueOrigem"),
                                 rs.getInt("idMovimentacao"),
-                                rs.getDate("dataHora"),
+                                rs.getDate("data"),
                                 rs.getInt("tipoMovimentacao")
                         );
                         break;

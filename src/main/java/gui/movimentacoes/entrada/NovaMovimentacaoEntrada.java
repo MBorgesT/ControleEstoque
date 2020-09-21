@@ -8,8 +8,6 @@ import dao.ProdutoDAO;
 import gui.MenuPrincipal;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -484,10 +482,13 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
 
     private void botaoCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCadastrarActionPerformed
         if (EntradaValidator.validate(formPanel) && AuxFunctions.popupConfirmacao("Confirmação", "Realmente deseja cadastrar esta entrada?")) {
+            int idFornecedor = radioButtonSim.isSelected() ? todosFornecedores[comboBoxFornecedor.getSelectedIndex()].getIdFornecedor() : -1;
+            int tipoMovimentacao = radioButtonSim.isSelected() ? 4 : 3;
+            
             EntradaProdutos novaEntrada = new EntradaProdutos(
-                    radioButtonSim.isSelected() ? todosFornecedores[comboBoxFornecedor.getSelectedIndex()].getIdFornecedor() : -1,
+                    idFornecedor,
                     todosEstoques[comboBoxEstoqueDestino.getSelectedIndex()].getIdEstoque(),
-                    radioButtonSim.isSelected() ? 4 : 3,
+                    tipoMovimentacao,
                     data
             );
 
@@ -517,8 +518,11 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
                         JOptionPane.INFORMATION_MESSAGE
                 );
                 
-                menuPrincipal.setArrayFornecedoresTodosCadastrados();
-                menuPrincipal.preencherTabelaFornecedorCompras();
+                menuPrincipal.setArrayInstanciasProdutoEstoqueTodosCadastrados();
+                menuPrincipal.preencherTabelaInstanciasProdutoEstoque();
+                
+                menuPrincipal.setArrayMovimentacoesTodasCadastradas();
+                menuPrincipal.preencherTabelaMovimentacoes();
 
                 this.dispose();
             } else {

@@ -4,13 +4,10 @@ import aux_functions.AuxFunctions;
 import dao.EstoqueDAO;
 import dao.FornecedorDAO;
 import dao.InstanciaProdutoMovimentacaoDAO;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-
 public class EntradaProdutos extends Movimentacao {
-    
+
     private int idFornecedor;
     private int idEstoqueDestino;
 
@@ -25,15 +22,26 @@ public class EntradaProdutos extends Movimentacao {
         this.idFornecedor = idFornecedor;
         this.idEstoqueDestino = idEstoqueDestino;
     }
+
+    @Override
+    public String toString() {
+        return (
+                "tipoMovimentacao: " + this.getTipoMovimentacao() + "\n" +
+                "idFornecedor: " + this.getIdFornecedor() + "\n" +
+                "idEstoqueDestino: " + this.getIdEstoqueDestino()
+        );
+    }
     
+    
+
     public Object[] getCompraFornecedoresTableRow() {
         String produtosMovimentacao = "";
-        for (InstanciaProdutoMovimentacao instancia : this.getInstanciasProduto()){
+        for (InstanciaProdutoMovimentacao instancia : this.getInstanciasProduto()) {
             produtosMovimentacao += instancia.getProduto().getDescricao() + ", ";
         }
-        
+
         produtosMovimentacao = produtosMovimentacao.substring(0, produtosMovimentacao.length() - 2);
-        
+
         return new Object[]{
             this.getFornecedor().getDescricao(),
             AuxFunctions.formatData(this.getData()),
@@ -42,7 +50,7 @@ public class EntradaProdutos extends Movimentacao {
             produtosMovimentacao
         };
     }
-    
+
     @Override
     public Object[] getMovimentacaoTableRow() {
         String produtosMovimentacao = "";
@@ -51,36 +59,36 @@ public class EntradaProdutos extends Movimentacao {
         }
         
         produtosMovimentacao = produtosMovimentacao.substring(0, produtosMovimentacao.length() - 2);
-        
+
         return new Object[]{
             AuxFunctions.formatData(this.getData()),
-            this.getTipoMovimentacao() == 4 ? "Entrada de produtos - compra" : "Entrada de produtos",
+            this.getTipoMovimentacao() == 4 ? "ENTRADA DE PRODUTOS - COMPRA" : "ENTRADA DE PRODUTOS",
             this.getTipoMovimentacao() == 4 ? this.getValorTotal() : null,
             null,
             this.getEstoqueDestino().getDescricao(),
             produtosMovimentacao
         };
     }
-    
+
     private Estoque getEstoqueDestino() {
         return EstoqueDAO.selectEstoquePorId(this.idEstoqueDestino);
     }
-    
-    private InstanciaProdutoMovimentacao[] getInstanciasProduto() {
-        return InstanciaProdutoMovimentacaoDAO.getInstanciasProdutoMovimentacaoPorIdMovimentacao(this.getIdMovimentacao(), this.getTipoMovimentacao());
+
+    public InstanciaProdutoMovimentacao[] getInstanciasProduto() {
+        return InstanciaProdutoMovimentacaoDAO.selectInstanciasProdutoMovimentacaoPorIdMovimentacao(this.getIdMovimentacao(), this.getTipoMovimentacao());
     }
-    
+
     private Fornecedor getFornecedor() {
         return FornecedorDAO.selectFornecedorPorId(this.idFornecedor);
     }
-    
+
     public float getValorTotal() {
         float valorTotal = 0;
-        
+
         for (InstanciaProdutoMovimentacao instancia : this.getInstanciasProduto()) {
             valorTotal += instancia.getValorUnitarioPago();
         }
-        
+
         return valorTotal;
     }
 
@@ -99,5 +107,9 @@ public class EntradaProdutos extends Movimentacao {
     public void setIdEstoqueDestino(int idEstoqueDestino) {
         this.idEstoqueDestino = idEstoqueDestino;
     }
-    
+
+    public boolean isCompra() {
+        return this.getTipoMovimentacao() == 4;
+    }
+
 }

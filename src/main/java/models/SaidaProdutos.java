@@ -30,7 +30,7 @@ public class SaidaProdutos extends Movimentacao {
         
         return new Object[]{
             AuxFunctions.formatData(this.getData()),
-            this.getTipoMovimentacao() == 1 ? "Saída de produtos - venda" : "Saída de produtos",
+            this.getTipoMovimentacao() == 1 ? "SAÍDA DE PRODUTOS - VENDA" : "SAÍDA DE PRODUTOS",
             this.getTipoMovimentacao() == 1 ? this.getValorTotal() : null,
             this.getEstoqueOrigem().getDescricao(),
             null,
@@ -43,7 +43,7 @@ public class SaidaProdutos extends Movimentacao {
     }
     
     public InstanciaProdutoMovimentacao[] getInstanciasProduto() {
-        return InstanciaProdutoMovimentacaoDAO.getInstanciasProdutoMovimentacaoPorIdMovimentacao(this.getIdMovimentacao(), this.getTipoMovimentacao());
+        return InstanciaProdutoMovimentacaoDAO.selectInstanciasProdutoMovimentacaoPorIdMovimentacao(this.getIdMovimentacao(), this.getTipoMovimentacao());
     }
     
     public float getValorTotal() {

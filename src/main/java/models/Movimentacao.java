@@ -16,6 +16,7 @@ public abstract class Movimentacao {
 
     public Movimentacao(Date data, int tipoMovimentacao) {
         this.data = data;
+        this.tipoMovimentacao = tipoMovimentacao;
     }
     
     public Object[] getMovimentacaoTableRow() {

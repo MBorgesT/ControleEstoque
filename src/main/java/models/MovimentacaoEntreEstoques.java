@@ -50,7 +50,7 @@ public class MovimentacaoEntreEstoques extends Movimentacao {
     }
 
     private InstanciaProdutoMovimentacao[] getInstanciasProduto() {
-        return InstanciaProdutoMovimentacaoDAO.getInstanciasProdutoMovimentacaoPorIdMovimentacao(this.getIdMovimentacao(), this.getTipoMovimentacao());
+        return InstanciaProdutoMovimentacaoDAO.selectInstanciasProdutoMovimentacaoPorIdMovimentacao(this.getIdMovimentacao(), this.getTipoMovimentacao());
     }
 
 }

@@ -12,6 +12,7 @@ import gui.estoques.NovoEstoque;
 import gui.fornecedores.MaisInfoFornecedor;
 import gui.fornecedores.NovoFornecedor;
 import gui.movimentacoes.OpcoesNovaMovimentacao;
+import gui.movimentacoes.entrada.MaisInfoMovimentacaoEntrada;
 import gui.produtos.BuscaProduto;
 import gui.produtos.MaisInfoProduto;
 import gui.produtos.NovoProduto;
@@ -99,7 +100,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 } else {
                     Estoque estoqueSelecionado = estoquesNoComboBox[selectedIndex - 1];
 
-                    updateArrayInstanciasProdutoEstoque(InstanciaProdutoEstoqueDAO.getInstanciasProdutoEstoquePorIdEstoque(estoqueSelecionado.getIdEstoque()));
+                    updateArrayInstanciasProdutoEstoque(InstanciaProdutoEstoqueDAO.selectInstanciasProdutoEstoquePorEstoque(estoqueSelecionado.getIdEstoque()));
 
                     updateArrayMovimentacoes(MovimentacaoDAO.selectMovimentacoesPorEstoque(estoqueSelecionado.getIdEstoque()));
                 }
@@ -174,6 +175,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     public void setArrayInstanciasProdutoEstoqueTodosCadastrados() {
         this.instanciasProdutoEstoqueNaTabela = InstanciaProdutoEstoqueDAO.getTodasInstanciasProdutoEstoque();
+        comboBoxEstoque.setSelectedIndex(0);
     }
 
     public void updateArrayInstanciasProdutoEstoque(InstanciaProdutoEstoque[] instancias) {
@@ -191,6 +193,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     public void setArrayMovimentacoesTodasCadastradas() {
         this.movimentacoesNaTabela = MovimentacaoDAO.selectTodasMovimentacoes();
+        comboBoxEstoque.setSelectedIndex(0);
     }
 
     public void updateArrayMovimentacoes(Movimentacao[] movimentacoes) {
@@ -240,7 +243,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jButton8 = new javax.swing.JButton();
         botaoNovaMovimentacao = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
+        maisInfoMovimentacao = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabelaInstanciasProdutoEstoque = new javax.swing.JTable();
@@ -251,6 +254,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         relatorioPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Controle de Estoque");
         setResizable(false);
 
         tabbedPane.setTabPlacement(javax.swing.JTabbedPane.LEFT);
@@ -386,7 +390,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -497,7 +501,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -548,9 +552,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jButton10.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mais_info_24.png"))); // NOI18N
-        jButton10.setText("Mais Info");
+        maisInfoMovimentacao.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        maisInfoMovimentacao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mais_info_24.png"))); // NOI18N
+        maisInfoMovimentacao.setText("Mais Info");
+        maisInfoMovimentacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maisInfoMovimentacaoActionPerformed(evt);
+            }
+        });
 
         jButton14.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eraser_24.png"))); // NOI18N
@@ -564,11 +573,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(comboBoxEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(botaoMaisInfoEstoque)
-                .addGap(18, 18, 18)
-                .addComponent(botaoNovoEstoque)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(comboBoxEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(botaoMaisInfoEstoque)
+                        .addGap(18, 18, 18)
+                        .addComponent(botaoNovoEstoque)))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -579,7 +589,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jButton14)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton10)
+                        .addComponent(maisInfoMovimentacao)
                         .addGap(18, 18, 18)
                         .addComponent(botaoNovaMovimentacao)))
                 .addContainerGap(129, Short.MAX_VALUE))
@@ -594,17 +604,20 @@ public class MenuPrincipal extends javax.swing.JFrame {
                         .addComponent(jLabel4)
                         .addGap(8, 8, 8)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton8)
                             .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(maisInfoMovimentacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(botaoNovaMovimentacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(24, 24, 24)
                         .addComponent(comboBoxEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(botaoMaisInfoEstoque, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(botaoNovoEstoque, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(botaoNovoEstoque)
+                            .addComponent(botaoMaisInfoEstoque, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
@@ -662,7 +675,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jScrollPane5.setViewportView(tabelaMovimentacoes);
         if (tabelaMovimentacoes.getColumnModel().getColumnCount() > 0) {
             tabelaMovimentacoes.getColumnModel().getColumn(0).setPreferredWidth(100);
-            tabelaMovimentacoes.getColumnModel().getColumn(1).setPreferredWidth(200);
+            tabelaMovimentacoes.getColumnModel().getColumn(1).setPreferredWidth(250);
             tabelaMovimentacoes.getColumnModel().getColumn(2).setPreferredWidth(75);
             tabelaMovimentacoes.getColumnModel().getColumn(3).setPreferredWidth(180);
             tabelaMovimentacoes.getColumnModel().getColumn(4).setPreferredWidth(180);
@@ -696,7 +709,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -713,7 +726,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         );
         relatorioPanelLayout.setVerticalGroup(
             relatorioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 716, Short.MAX_VALUE)
+            .addGap(0, 728, Short.MAX_VALUE)
         );
 
         tabbedPane.addTab("Relatório", new javax.swing.ImageIcon(getClass().getResource("/relatorio_48.png")), relatorioPanel); // NOI18N
@@ -726,10 +739,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabbedPane)
-                .addContainerGap())
+            .addComponent(tabbedPane)
         );
 
         pack();
@@ -804,6 +814,23 @@ public class MenuPrincipal extends javax.swing.JFrame {
         new OpcoesNovaMovimentacao(this).setVisible(true);
     }//GEN-LAST:event_botaoNovaMovimentacaoActionPerformed
 
+    private void maisInfoMovimentacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maisInfoMovimentacaoActionPerformed
+        int selectedRow = tabelaMovimentacoes.getSelectedRow();
+        
+        if (selectedRow >= 0) {
+            if (movimentacoesNaTabela[selectedRow] instanceof EntradaProdutos) {
+                new MaisInfoMovimentacaoEntrada(this, (EntradaProdutos) movimentacoesNaTabela[selectedRow]).setVisible(true);
+            }
+        } else {
+            AuxFunctions.popup(
+                    this,
+                    "Atenção",
+                    "Favor selecionar uma movimentação na tabela para fazer essa operação.",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
+    }//GEN-LAST:event_maisInfoMovimentacaoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoBuscarProduto;
@@ -819,7 +846,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboBoxFornecedor;
     private javax.swing.JPanel estoquesPanel;
     private javax.swing.JPanel fornecedoresPanel;
-    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel10;
@@ -838,6 +864,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JButton maisInfoMovimentacao;
     private javax.swing.JPanel produtosPanel;
     private javax.swing.JPanel relatorioPanel;
     private javax.swing.JTabbedPane tabbedPane;

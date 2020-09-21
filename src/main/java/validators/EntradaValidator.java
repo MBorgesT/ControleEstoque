@@ -106,8 +106,6 @@ public class EntradaValidator {
 
             for (int i = 0; i < tabelaProdutosEntrada.getRowCount(); i++) {
 
-                System.out.print(i);
-
                 if (tabelaProdutosEntrada.getValueAt(i, 3) == null || (radioButtonSim.isSelected() && tabelaProdutosEntrada.getValueAt(i, 4) == null)) {
                     AuxFunctions.popup(
                             null,

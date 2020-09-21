@@ -12,11 +12,13 @@ import models.InstanciaProdutoMovimentacao;
 
 public class InstanciaProdutoMovimentacaoDAO {
 
-    public static InstanciaProdutoMovimentacao[] getInstanciasProdutoMovimentacaoPorIdMovimentacao(int idMovimentacao, int tipoMovimentacao) {
+    public static InstanciaProdutoMovimentacao[] selectInstanciasProdutoMovimentacaoPorIdMovimentacao(int idMovimentacao, int tipoMovimentacao) {
         try {
             Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
             String sql = "SELECT * FROM InstanciaProduto WHERE idMovimentacao = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
+            
+            System.out.println("idMovimentacao: " + idMovimentacao + "\ttipoMovimentacao: " + tipoMovimentacao);
 
             ps.setInt(1, idMovimentacao);
             ResultSet rs = ps.executeQuery();
@@ -24,26 +26,27 @@ public class InstanciaProdutoMovimentacaoDAO {
             ArrayList<InstanciaProdutoMovimentacao> arrayListInstancias = new ArrayList<>();
 
             while (rs.next()) {
-                if (tipoMovimentacao == 4) {
-                    arrayListInstancias.add(new InstanciaProdutoMovimentacao(
-                            rs.getFloat("valorUnitarioPago"),
-                            rs.getInt("idInstanciaProduto"),
-                            rs.getInt("idProduto"),
-                            rs.getInt("quantidade")
-                    ));
-                } else if (tipoMovimentacao == 1) {
-                    arrayListInstancias.add(new InstanciaProdutoMovimentacao(
-                            rs.getFloat("valorUnitarioVenda"),
-                            rs.getInt("idInstanciaProduto"),
-                            rs.getInt("idProduto"),
-                            rs.getInt("quantidade")
-                    ));
-                } else {
-                    arrayListInstancias.add(new InstanciaProdutoMovimentacao(
-                            rs.getInt("idInstanciaProduto"),
-                            rs.getInt("idProduto"),
-                            rs.getInt("quantidade")
-                    ));
+                switch (tipoMovimentacao) {
+                    case 4:
+                        arrayListInstancias.add(new InstanciaProdutoMovimentacao(
+                                rs.getFloat("valorUnitarioPago"),
+                                rs.getInt("idInstanciaProduto"),
+                                rs.getInt("idProduto"),
+                                rs.getInt("quantidade")
+                        )); break;
+                    case 1:
+                        arrayListInstancias.add(new InstanciaProdutoMovimentacao(
+                                rs.getFloat("valorUnitarioVenda"),
+                                rs.getInt("idInstanciaProduto"),
+                                rs.getInt("idProduto"),
+                                rs.getInt("quantidade")
+                        )); break;
+                    default:
+                        arrayListInstancias.add(new InstanciaProdutoMovimentacao(
+                                rs.getInt("idInstanciaProduto"),
+                                rs.getInt("idProduto"),
+                                rs.getInt("quantidade")
+                        )); break;
                 }
             }
 

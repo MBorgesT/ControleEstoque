@@ -1,8 +1,12 @@
 alterar o sistema de alert das operações no banco pra não dar problemas em retornos booleanos
 
-concertar o o problema de conversão de localdatetime para sql datetime
+checar strings em lower case na exibição em tabela de movimentações
+
+colocar valores unitários pagos e de venda do produto como obrigatórios
 
 
+
+DONE - concertar o o problema de conversão de localdatetime para sql datetime
 
 DONE -validador de entrada precisa ser alterado
 

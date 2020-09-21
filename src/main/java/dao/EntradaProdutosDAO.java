@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.EntradaProdutos;
-import models.Estoque;
+import models.InstanciaProdutoEstoque;
 import models.InstanciaProdutoMovimentacao;
 
 public class EntradaProdutosDAO {
-    
+
     public static EntradaProdutos[] selectTodasCompras() {
         try {
             Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
@@ -41,17 +41,17 @@ public class EntradaProdutosDAO {
         }
         return null;
     }
-    
+
     public static EntradaProdutos[] selectComprasPorIdFornecedor(int idFornecedor) {
         try {
             Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
-            
+
             String sql = "SELECT * FROM Movimentacao WHERE tipoMovimentacao = 4 AND idFornecedor = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            
+
             ps.setInt(1, idFornecedor);
             ResultSet rs = ps.executeQuery();
-            
+
             ArrayList<EntradaProdutos> arrayListEntradas = new ArrayList<>();
 
             while (rs.next()) {
@@ -73,32 +73,11 @@ public class EntradaProdutosDAO {
         return null;
     }
 
-    public static boolean insertEntradaProdutos(EntradaProdutos entradaProdutos, InstanciaProdutoMovimentacao[] instancias) {
+    private static void insertInstancias(Connection conn, EntradaProdutos entradaProdutos, InstanciaProdutoMovimentacao[] instancias) {
         try {
-            Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
-
             String sql;
-            if (entradaProdutos.getTipoMovimentacao() == 4) {
-                sql = "INSERT INTO Movimentacao(data, tipoMovimentacao, idEstoqueDestino, idFornecedor) VALUES (?, ?, ?, ?)";
-            } else {
-                sql = "INSERT INTO Movimentacao(data, tipoMovimentacao, idEstoqueDestino) VALUES (?, ?, ?)";
-            }
-
-            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-            ps.setDate(1, AuxFunctions.convertUtilToSql(entradaProdutos.getData()));
-            ps.setInt(2, entradaProdutos.getTipoMovimentacao());
-            ps.setInt(3, entradaProdutos.getIdEstoqueDestino());
-            if (entradaProdutos.getTipoMovimentacao() == 4) {
-                ps.setInt(4, entradaProdutos.getIdFornecedor());
-            }
-
-            ps.executeUpdate();
-
-            ResultSet rs = ps.getGeneratedKeys();
-            rs.next();
-            int idEntradaEstoque = rs.getInt(1);
-
+            PreparedStatement ps;
+            ResultSet rs;
             for (InstanciaProdutoMovimentacao instancia : instancias) {
                 if (entradaProdutos.getTipoMovimentacao() == 4) {
                     sql = "INSERT INTO InstanciaProduto(idProduto, quantidade, idMovimentacao, categoria, valorUnitarioPago) VALUES (?, ?, ?, ?, ?)";
@@ -110,7 +89,7 @@ public class EntradaProdutosDAO {
 
                 ps.setInt(1, instancia.getIdProduto());
                 ps.setInt(2, instancia.getQuantidade());
-                ps.setInt(3, idEntradaEstoque);
+                ps.setInt(3, entradaProdutos.getIdMovimentacao());
                 ps.setInt(4, 1); // por causa de ser movimentação; seria 0 se fosse instancia de estoque
                 if (entradaProdutos.getTipoMovimentacao() == 4) {
                     ps.setFloat(5, instancia.getValorUnitarioPago());
@@ -122,9 +101,10 @@ public class EntradaProdutosDAO {
                 Categoria 0 para checar se existe alguma instancia desse produto já em estoque;
                 Caso não, cria nova instancia de estoque; caso sim, acrescenta nesse
                  */
-                sql = "SELECT quantidade, idInstanciaProduto FROM InstanciaProduto WHERE idProduto = ? AND categoria = 0";
+                sql = "SELECT quantidade, idInstanciaProduto FROM InstanciaProduto WHERE idProduto = ? AND idEstoque = ? AND categoria = 0";
                 ps = conn.prepareStatement(sql);
                 ps.setInt(1, instancia.getIdProduto());
+                ps.setInt(2, entradaProdutos.getIdEstoqueDestino());
                 rs = ps.executeQuery();
 
                 if (rs.next()) {
@@ -160,6 +140,88 @@ public class EntradaProdutosDAO {
                     ps.executeUpdate();
                 }
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void updateInstancias(Connection conn, EntradaProdutos entradaProdutos, InstanciaProdutoMovimentacao[] novasInstancias, int tipoMovimentacaoAntes, int idEstoqueDestinoAntes) {
+        try {
+            String sql;
+            PreparedStatement ps;
+            ResultSet rs;
+
+            
+            System.out.println("id: " + entradaProdutos.getIdMovimentacao());
+            
+            InstanciaProdutoMovimentacao[] instanciasAntigas = InstanciaProdutoMovimentacaoDAO.selectInstanciasProdutoMovimentacaoPorIdMovimentacao(entradaProdutos.getIdMovimentacao(), tipoMovimentacaoAntes);
+            
+            for (InstanciaProdutoMovimentacao instancia : instanciasAntigas) {
+                sql = "SELECT quantidade, idInstanciaProduto FROM InstanciaProduto WHERE idProduto = ? AND idEstoque = ? AND categoria = 0";
+                ps = conn.prepareStatement(sql);
+                
+                ps.setInt(1, instancia.getIdProduto());
+                ps.setInt(2, idEstoqueDestinoAntes);
+                
+                rs = ps.executeQuery();
+                
+                rs.next();
+                
+                int quantidadeJaCadastrada = rs.getInt("quantidade");
+                int idInstanciaEstoque = rs.getInt("idInstanciaProduto");
+                
+                sql = "UPDATE InstanciaProduto SET quantidade = ? WHERE idInstanciaProduto = ?";
+                ps = conn.prepareStatement(sql);
+                
+                System.out.println(quantidadeJaCadastrada - instancia.getQuantidade());
+                
+                ps.setInt(1, quantidadeJaCadastrada - instancia.getQuantidade());
+                ps.setInt(2, idInstanciaEstoque);
+                
+                ps.executeUpdate();
+            }
+            
+            sql = "DELETE FROM InstanciaProduto WHERE idMovimentacao = ?";
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, entradaProdutos.getIdMovimentacao());
+
+            ps.executeUpdate();
+
+            
+            insertInstancias(conn, entradaProdutos, novasInstancias);
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static boolean insertEntradaProdutos(EntradaProdutos entradaProdutos, InstanciaProdutoMovimentacao[] instancias) {
+        try {
+            Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
+            
+            String sql;
+            if (entradaProdutos.getTipoMovimentacao() == 4) {
+                sql = "INSERT INTO Movimentacao(data, tipoMovimentacao, idEstoqueDestino, idFornecedor) VALUES (?, ?, ?, ?)";
+            } else {
+                sql = "INSERT INTO Movimentacao(data, tipoMovimentacao, idEstoqueDestino) VALUES (?, ?, ?)";
+            }
+
+            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setDate(1, AuxFunctions.convertUtilToSql(entradaProdutos.getData()));
+            ps.setInt(2, entradaProdutos.getTipoMovimentacao());
+            ps.setInt(3, entradaProdutos.getIdEstoqueDestino());
+            if (entradaProdutos.getTipoMovimentacao() == 4) {
+                ps.setInt(4, entradaProdutos.getIdFornecedor());
+            }
+
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
+            entradaProdutos.setIdMovimentacao(rs.getInt(1));
+
+            insertInstancias(conn, entradaProdutos, instancias);
 
             conn.close();
 
@@ -169,5 +231,58 @@ public class EntradaProdutosDAO {
         }
         return false;
     }
-    
+
+    public static boolean updateEntradaProdutos(EntradaProdutos entradaProdutos, InstanciaProdutoMovimentacao[] novasInstancias, int tipoMovimentacaoAntes, int idEstoqueDestinoAntes) {
+        try {
+            Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
+
+            String sql = "UPDATE Movimentacao SET tipoMovimentacao = ?, idEstoqueDestino = ?, idFornecedor = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, entradaProdutos.getTipoMovimentacao());
+            ps.setInt(2, entradaProdutos.getIdEstoqueDestino());
+            if (entradaProdutos.getIdFornecedor() == -1) {
+                ps.setNull(3, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(3, entradaProdutos.getIdFornecedor());
+            }
+
+            ps.executeUpdate();
+
+            updateInstancias(conn, entradaProdutos, novasInstancias, tipoMovimentacaoAntes, idEstoqueDestinoAntes);
+
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(EntradaProdutosDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public static boolean podeFazerUpdate(EntradaProdutos entradaProdutos, InstanciaProdutoMovimentacao[] instanciasAntigas, InstanciaProdutoMovimentacao[] novasInstancias) {
+        boolean flag = true;
+
+        for (InstanciaProdutoMovimentacao instanciaMovimentacaoNova : novasInstancias) {
+            int idProduto = instanciaMovimentacaoNova.getIdProduto();
+
+            InstanciaProdutoMovimentacao instanciaMovimentacaoAntiga = null;
+            for (InstanciaProdutoMovimentacao i : instanciasAntigas) {
+                if (i.getIdProduto() == idProduto) {
+                    instanciaMovimentacaoAntiga = i;
+                    break;
+                }
+            }
+
+            if (instanciaMovimentacaoAntiga != null) {
+                int idEstoque = entradaProdutos.getIdEstoqueDestino();
+                InstanciaProdutoEstoque instanciaEstoque = InstanciaProdutoEstoqueDAO.selectInstanciasProdutoEstoquePorEstoqueEProduto(idEstoque, idProduto);
+
+                if (instanciaMovimentacaoAntiga.getQuantidade() - instanciaMovimentacaoNova.getQuantidade() > instanciaEstoque.getQuantidade()) {
+                    flag = false;
+                    break;
+                }
+            }
+        }
+
+        return flag;
+    }
 }
