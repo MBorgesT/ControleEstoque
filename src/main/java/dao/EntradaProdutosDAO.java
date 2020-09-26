@@ -151,36 +151,31 @@ public class EntradaProdutosDAO {
             PreparedStatement ps;
             ResultSet rs;
 
-            
-            System.out.println("id: " + entradaProdutos.getIdMovimentacao());
-            
             InstanciaProdutoMovimentacao[] instanciasAntigas = InstanciaProdutoMovimentacaoDAO.selectInstanciasProdutoMovimentacaoPorIdMovimentacao(entradaProdutos.getIdMovimentacao(), tipoMovimentacaoAntes);
-            
+
             for (InstanciaProdutoMovimentacao instancia : instanciasAntigas) {
                 sql = "SELECT quantidade, idInstanciaProduto FROM InstanciaProduto WHERE idProduto = ? AND idEstoque = ? AND categoria = 0";
                 ps = conn.prepareStatement(sql);
-                
+
                 ps.setInt(1, instancia.getIdProduto());
                 ps.setInt(2, idEstoqueDestinoAntes);
-                
+
                 rs = ps.executeQuery();
-                
+
                 rs.next();
-                
+
                 int quantidadeJaCadastrada = rs.getInt("quantidade");
                 int idInstanciaEstoque = rs.getInt("idInstanciaProduto");
-                
+
                 sql = "UPDATE InstanciaProduto SET quantidade = ? WHERE idInstanciaProduto = ?";
                 ps = conn.prepareStatement(sql);
-                
-                System.out.println(quantidadeJaCadastrada - instancia.getQuantidade());
-                
+
                 ps.setInt(1, quantidadeJaCadastrada - instancia.getQuantidade());
                 ps.setInt(2, idInstanciaEstoque);
-                
+
                 ps.executeUpdate();
             }
-            
+
             sql = "DELETE FROM InstanciaProduto WHERE idMovimentacao = ?";
             ps = conn.prepareStatement(sql);
 
@@ -188,8 +183,45 @@ public class EntradaProdutosDAO {
 
             ps.executeUpdate();
 
-            
             insertInstancias(conn, entradaProdutos, novasInstancias);
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void deleteInstancias(Connection conn, EntradaProdutos entradaProdutos) {
+        try {
+            InstanciaProdutoMovimentacao[] instanciasMovimentacao = entradaProdutos.getInstanciasProduto();
+            InstanciaProdutoEstoque iEstoque;
+
+            String sql;
+            PreparedStatement ps;
+
+            int idEstoque = entradaProdutos.getIdEstoqueDestino();
+            int idProduto;
+
+            for (InstanciaProdutoMovimentacao iMovimentacao : instanciasMovimentacao) {
+
+                // alteração de equantidade no estoque de destino
+                idProduto = iMovimentacao.getIdProduto();
+                iEstoque = InstanciaProdutoEstoqueDAO.selectInstanciaProdutoEstoquePorEstoqueEProduto(idEstoque, idProduto);
+
+                sql = "UPDATE InstanciaProduto SET quantidade = ? WHERE idInstanciaProduto = ?";
+                ps = conn.prepareStatement(sql);
+
+                ps.setInt(1, iEstoque.getQuantidade() - iMovimentacao.getQuantidade());
+                ps.setInt(2, iEstoque.getIdInstanciaProduto());
+
+                ps.executeUpdate();
+
+                // remoção da instância em si
+                sql = "DELETE FROM InstanciaProduto WHERE idInstanciaProduto = ?";
+                ps = conn.prepareStatement(sql);
+
+                ps.setInt(1, iMovimentacao.getIdInstanciaProduto());
+
+                ps.executeUpdate();
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -198,7 +230,7 @@ public class EntradaProdutosDAO {
     public static boolean insertEntradaProdutos(EntradaProdutos entradaProdutos, InstanciaProdutoMovimentacao[] instancias) {
         try {
             Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
-            
+
             String sql;
             if (entradaProdutos.getTipoMovimentacao() == 4) {
                 sql = "INSERT INTO Movimentacao(data, tipoMovimentacao, idEstoqueDestino, idFornecedor) VALUES (?, ?, ?, ?)";
@@ -258,6 +290,47 @@ public class EntradaProdutosDAO {
         return false;
     }
 
+    public static boolean deleteEntradaProdutos(EntradaProdutos entradaProdutos) {
+        try {
+            Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
+            
+            deleteInstancias(conn, entradaProdutos);
+            
+            String sql = "DELETE FROM Movimentacao WHERE idMovimentacao = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            
+            ps.setInt(1, entradaProdutos.getIdMovimentacao());
+            
+            ps.executeUpdate();
+            
+            conn.close();
+            
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public static boolean podeExcluir(EntradaProdutos entradaProdutos) {
+        int idEstoqueDestino = entradaProdutos.getIdEstoqueDestino();
+        int idProduto;
+        boolean flag = true;
+        InstanciaProdutoEstoque iEstoque;
+        for (InstanciaProdutoMovimentacao iMovimentacao : entradaProdutos.getInstanciasProduto()) {
+
+            idProduto = iMovimentacao.getIdProduto();
+            iEstoque = InstanciaProdutoEstoqueDAO.selectInstanciaProdutoEstoquePorEstoqueEProduto(idEstoqueDestino, idProduto);
+
+            if (iEstoque.getQuantidade() < iMovimentacao.getQuantidade()) {
+                flag = false;
+                break;
+            }
+        }
+
+        return flag;
+    }
+
     public static boolean podeFazerUpdate(EntradaProdutos entradaProdutos, InstanciaProdutoMovimentacao[] instanciasAntigas, InstanciaProdutoMovimentacao[] novasInstancias) {
         boolean flag = true;
 
@@ -274,7 +347,7 @@ public class EntradaProdutosDAO {
 
             if (instanciaMovimentacaoAntiga != null) {
                 int idEstoque = entradaProdutos.getIdEstoqueDestino();
-                InstanciaProdutoEstoque instanciaEstoque = InstanciaProdutoEstoqueDAO.selectInstanciasProdutoEstoquePorEstoqueEProduto(idEstoque, idProduto);
+                InstanciaProdutoEstoque instanciaEstoque = InstanciaProdutoEstoqueDAO.selectInstanciaProdutoEstoquePorEstoqueEProduto(idEstoque, idProduto);
 
                 if (instanciaMovimentacaoAntiga.getQuantidade() - instanciaMovimentacaoNova.getQuantidade() > instanciaEstoque.getQuantidade()) {
                     flag = false;

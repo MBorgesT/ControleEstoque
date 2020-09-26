@@ -133,6 +133,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Entre Estoques"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botaoNovaMovimentacaoEntreEstoquesActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="botaoNovaSaida">
               <Properties>
@@ -144,6 +147,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Sa&#xed;da de Estoque"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botaoNovaSaidaActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

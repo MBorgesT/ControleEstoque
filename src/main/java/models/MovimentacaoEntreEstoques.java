@@ -3,8 +3,6 @@ package models;
 import aux_functions.AuxFunctions;
 import dao.EstoqueDAO;
 import dao.InstanciaProdutoMovimentacaoDAO;
-import java.sql.Date;
-import java.time.LocalDateTime;
 
 public class MovimentacaoEntreEstoques extends Movimentacao {
 
@@ -34,7 +32,8 @@ public class MovimentacaoEntreEstoques extends Movimentacao {
 
         return new Object[]{
             AuxFunctions.formatData(this.getData()),
-            "Entre estoques",
+            "ENTRE ESTOQUES",
+            null,
             this.getEstoqueOrigem().getDescricao(),
             this.getEstoqueDestino().getDescricao(),
             produtosMovimentacao
@@ -49,8 +48,26 @@ public class MovimentacaoEntreEstoques extends Movimentacao {
         return EstoqueDAO.selectEstoquePorId(this.idEstoqueDestino);
     }
 
-    private InstanciaProdutoMovimentacao[] getInstanciasProduto() {
+    public InstanciaProdutoMovimentacao[] getInstanciasProduto() {
         return InstanciaProdutoMovimentacaoDAO.selectInstanciasProdutoMovimentacaoPorIdMovimentacao(this.getIdMovimentacao(), this.getTipoMovimentacao());
     }
+
+    public int getIdEstoqueOrigem() {
+        return idEstoqueOrigem;
+    }
+
+    public void setIdEstoqueOrigem(int idEstoqueOrigem) {
+        this.idEstoqueOrigem = idEstoqueOrigem;
+    }
+
+    public int getIdEstoqueDestino() {
+        return idEstoqueDestino;
+    }
+
+    public void setIdEstoqueDestino(int idEstoqueDestino) {
+        this.idEstoqueDestino = idEstoqueDestino;
+    }
+    
+    
 
 }

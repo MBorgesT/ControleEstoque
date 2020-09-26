@@ -26,7 +26,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
 
     private Fornecedor[] todosFornecedores;
     private Estoque[] todosEstoques;
-    private Date data;
 
     private Produto[] todosProdutosCadastrados;
     private Produto[] produtosNaTabela;
@@ -36,7 +35,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
         initComponents();
 
         this.menuPrincipal = menuPrincipal;
-        this.data = new Date(System.currentTimeMillis());
 
         this.todosProdutosCadastrados = ProdutoDAO.selectTodosProdutos();
         this.produtosNaTabela = this.todosProdutosCadastrados;
@@ -46,7 +44,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
 
         preencherComboBoxFornecedores();
         preencherComboBoxEstoques();
-        preencherCampoData();
         preencherTabela();
 
         comboBoxFornecedor.setEnabled(true);
@@ -121,10 +118,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
         comboBoxEstoqueDestino.setSelectedIndex(-1);
     }
 
-    private void preencherCampoData() {
-        campoData.setText(AuxFunctions.formatData(data));
-    }
-
     private void preencherTabela() {
         DefaultTableModel model = (DefaultTableModel) tabelaProdutosCadastrados.getModel();
 
@@ -157,8 +150,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tabelaProdutosEntrada = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        campoData = new javax.swing.JTextField();
         botaoBuscar = new javax.swing.JButton();
         campoBusca = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -277,12 +268,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         jLabel3.setText("Produtos da entrada:");
 
-        jLabel7.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
-        jLabel7.setText("Data:");
-
-        campoData.setEditable(false);
-        campoData.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-
         botaoBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/search_24.png"))); // NOI18N
         botaoBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -321,10 +306,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(radioButtonNao))
                             .addComponent(jLabel2))
-                        .addGap(18, 18, 18)
-                        .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(campoData, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(comboBoxFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -367,14 +348,12 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
                 .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel7))
+                    .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(radioButtonSim)
-                        .addComponent(radioButtonNao)
-                        .addComponent(campoData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(radioButtonNao))
                     .addComponent(comboBoxFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboBoxEstoqueDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -489,7 +468,7 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
                     idFornecedor,
                     todosEstoques[comboBoxEstoqueDestino.getSelectedIndex()].getIdEstoque(),
                     tipoMovimentacao,
-                    data
+                    new Date(System.currentTimeMillis())
             );
 
             ArrayList<InstanciaProdutoMovimentacao> arrayInstancias = new ArrayList<>();
@@ -610,7 +589,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
     private javax.swing.JButton botaoCancelar;
     private javax.swing.JButton botaoExcluirProduto;
     private javax.swing.JTextField campoBusca;
-    private javax.swing.JTextField campoData;
     private javax.swing.JTextField campoValorTabela;
     private javax.swing.ButtonGroup categoriaButtonGroup;
     private javax.swing.JComboBox<String> comboBoxEstoqueDestino;
@@ -622,7 +600,6 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

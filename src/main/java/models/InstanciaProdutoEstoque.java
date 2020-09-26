@@ -18,7 +18,17 @@ public class InstanciaProdutoEstoque extends InstanciaProduto {
         this.idEstoque = idEstoque;
     }
     
-    public Object[] getInstanciasProdutoEstoqueTableRow() {
+    public Object[] getMovimentacaoEntreEstoquesTableRow() {
+        Produto produto = this.getProduto();
+        return new Object[]{
+            produto.getDescricao(),
+            produto.getQuantidadeNaEmbalagem(),
+            produto.getUnidadeDeMedida(),
+            this.getQuantidade()
+        };
+    }
+    
+    public Object[] getInstanciasMovimentacaoTableRow() {
         return new Object[]{
             this.getEstoque().getDescricao(),
             this.getProduto().getDescricao(),

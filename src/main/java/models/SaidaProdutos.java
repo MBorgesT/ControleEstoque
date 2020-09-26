@@ -3,7 +3,7 @@ package models;
 import aux_functions.AuxFunctions;
 import dao.EstoqueDAO;
 import dao.InstanciaProdutoMovimentacaoDAO;
-import java.sql.Date;
+import java.util.Date;
 
 public class SaidaProdutos extends Movimentacao {
 
@@ -26,12 +26,13 @@ public class SaidaProdutos extends Movimentacao {
             produtosMovimentacao += instancia.getProduto().getDescricao() + ", ";
         }
         
-        produtosMovimentacao = produtosMovimentacao.substring(0, produtosMovimentacao.length() - 2);
+        if (!produtosMovimentacao.isEmpty())
+            produtosMovimentacao = produtosMovimentacao.substring(0, produtosMovimentacao.length() - 2);
         
         return new Object[]{
             AuxFunctions.formatData(this.getData()),
             this.getTipoMovimentacao() == 1 ? "SAÍDA DE PRODUTOS - VENDA" : "SAÍDA DE PRODUTOS",
-            this.getTipoMovimentacao() == 1 ? this.getValorTotal() : null,
+            this.getTipoMovimentacao() == 1 ? AuxFunctions.valorFloatParaString(this.getValorTotal()) : null,
             this.getEstoqueOrigem().getDescricao(),
             null,
             produtosMovimentacao
@@ -54,6 +55,14 @@ public class SaidaProdutos extends Movimentacao {
         }
         
         return valorTotal;
+    }
+
+    public int getIdEstoqueOrigem() {
+        return idEstoqueOrigem;
+    }
+
+    public void setIdEstoqueOrigem(int idEstoqueOrigem) {
+        this.idEstoqueOrigem = idEstoqueOrigem;
     }
 
 }

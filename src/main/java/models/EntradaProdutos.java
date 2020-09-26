@@ -31,8 +31,6 @@ public class EntradaProdutos extends Movimentacao {
                 "idEstoqueDestino: " + this.getIdEstoqueDestino()
         );
     }
-    
-    
 
     public Object[] getCompraFornecedoresTableRow() {
         String produtosMovimentacao = "";
@@ -45,7 +43,7 @@ public class EntradaProdutos extends Movimentacao {
         return new Object[]{
             this.getFornecedor().getDescricao(),
             AuxFunctions.formatData(this.getData()),
-            this.getTipoMovimentacao() == 4 ? this.getValorTotal() : null,
+            this.getTipoMovimentacao() == 4 ? AuxFunctions.valorFloatParaString(this.getValorTotal()) : null,
             this.getEstoqueDestino().getDescricao(),
             produtosMovimentacao
         };

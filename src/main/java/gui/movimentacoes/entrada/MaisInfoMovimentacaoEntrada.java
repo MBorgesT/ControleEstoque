@@ -63,6 +63,10 @@ public class MaisInfoMovimentacaoEntrada extends javax.swing.JFrame {
 
         tabelaProdutosCadastrados.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tabelaProdutosEntrada.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        
+        // temporario?
+        botaoEditarInfo.setVisible(false);
+        botaoCancelarEdicao.setVisible(false);
 
         flipEditarInfo(false);
     }
@@ -661,7 +665,40 @@ public class MaisInfoMovimentacaoEntrada extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoEditarInfoActionPerformed
 
     private void botaoExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoExcluirActionPerformed
+        if (EntradaProdutosDAO.podeExcluir(entradaProdutos)) {
+            if (AuxFunctions.popupConfirmacao("Exclusão", "Realmente deseja realizar a exclusão?")) {
+                if (EntradaProdutosDAO.deleteEntradaProdutos(entradaProdutos)) {
+                    AuxFunctions.popup(
+                            this,
+                            "Exclusão",
+                            "Exclusão realizada com sucesso.",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
 
+                    menuPrincipal.setArrayInstanciasProdutoEstoqueTodosCadastrados();
+                    menuPrincipal.preencherTabelaInstanciasProdutoEstoque();
+
+                    menuPrincipal.setArrayMovimentacoesTodasCadastradas();
+                    menuPrincipal.preencherTabelaMovimentacoes();
+
+                    this.dispose();
+                } else {
+                    AuxFunctions.popup(
+                            this,
+                            "Erro",
+                            "Houve algum erro ao excluir a movimentação no banco de dados.\nFavorReiniciar o programa e tentar novamente.",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        } else {
+            AuxFunctions.popup(
+                    this,
+                    "Atenção",
+                    "A exclusão não pode ser realizada pois o estoque de destino não possui mais essas quantidades de produtos nele.",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
     }//GEN-LAST:event_botaoExcluirActionPerformed
 
     private void botaoBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarActionPerformed

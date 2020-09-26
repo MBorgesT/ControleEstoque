@@ -3,6 +3,8 @@ package gui.movimentacoes;
 
 import gui.MenuPrincipal;
 import gui.movimentacoes.entrada.NovaMovimentacaoEntrada;
+import gui.movimentacoes.entre_estoques.NovaMovimentacaoEntreEstoques;
+import gui.movimentacoes.saida.NovaMovimentacaoSaida;
 
 public class OpcoesNovaMovimentacao extends javax.swing.JFrame {
     
@@ -46,10 +48,20 @@ public class OpcoesNovaMovimentacao extends javax.swing.JFrame {
         botaoNovaMovimentacaoEntreEstoques.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         botaoNovaMovimentacaoEntreEstoques.setIcon(new javax.swing.ImageIcon(getClass().getResource("/up_arrow_36.png"))); // NOI18N
         botaoNovaMovimentacaoEntreEstoques.setText("Entre Estoques");
+        botaoNovaMovimentacaoEntreEstoques.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoNovaMovimentacaoEntreEstoquesActionPerformed(evt);
+            }
+        });
 
         botaoNovaSaida.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         botaoNovaSaida.setIcon(new javax.swing.ImageIcon(getClass().getResource("/out_arrow_36.png"))); // NOI18N
         botaoNovaSaida.setText("Saída de Estoque");
+        botaoNovaSaida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoNovaSaidaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -115,6 +127,16 @@ public class OpcoesNovaMovimentacao extends javax.swing.JFrame {
         new NovaMovimentacaoEntrada(menuPrincipal).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_botaoNovaEntradaActionPerformed
+
+    private void botaoNovaMovimentacaoEntreEstoquesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoNovaMovimentacaoEntreEstoquesActionPerformed
+        new NovaMovimentacaoEntreEstoques(menuPrincipal).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_botaoNovaMovimentacaoEntreEstoquesActionPerformed
+
+    private void botaoNovaSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoNovaSaidaActionPerformed
+        new NovaMovimentacaoSaida(menuPrincipal).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_botaoNovaSaidaActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoNovaEntrada;

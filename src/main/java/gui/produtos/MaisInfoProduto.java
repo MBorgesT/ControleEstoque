@@ -260,6 +260,7 @@ public class MaisInfoProduto extends javax.swing.JFrame {
         radioButtonNao.setText("Não");
         radioButtonNao.setName("radioButtonNao"); // NOI18N
 
+        tabelaProdutosCadastrados.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         tabelaProdutosCadastrados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -290,6 +291,7 @@ public class MaisInfoProduto extends javax.swing.JFrame {
 
         scrollPaneIngredientes.setName("scrollPaneIngredientes"); // NOI18N
 
+        tabelaIngredientes.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
         tabelaIngredientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 

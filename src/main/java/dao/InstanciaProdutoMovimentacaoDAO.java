@@ -17,8 +17,6 @@ public class InstanciaProdutoMovimentacaoDAO {
             Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
             String sql = "SELECT * FROM InstanciaProduto WHERE idMovimentacao = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            
-            System.out.println("idMovimentacao: " + idMovimentacao + "\ttipoMovimentacao: " + tipoMovimentacao);
 
             ps.setInt(1, idMovimentacao);
             ResultSet rs = ps.executeQuery();

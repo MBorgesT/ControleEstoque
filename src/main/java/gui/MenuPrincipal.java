@@ -13,6 +13,8 @@ import gui.fornecedores.MaisInfoFornecedor;
 import gui.fornecedores.NovoFornecedor;
 import gui.movimentacoes.OpcoesNovaMovimentacao;
 import gui.movimentacoes.entrada.MaisInfoMovimentacaoEntrada;
+import gui.movimentacoes.entre_estoques.MaisInfoMovimentacaoEntreEstoques;
+import gui.movimentacoes.saida.MaisInfoMovimentacaoSaida;
 import gui.produtos.BuscaProduto;
 import gui.produtos.MaisInfoProduto;
 import gui.produtos.NovoProduto;
@@ -25,6 +27,7 @@ import models.Estoque;
 import models.Fornecedor;
 import models.InstanciaProdutoEstoque;
 import models.Movimentacao;
+import models.MovimentacaoEntreEstoques;
 import models.Produto;
 import models.SaidaProdutos;
 
@@ -100,7 +103,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 } else {
                     Estoque estoqueSelecionado = estoquesNoComboBox[selectedIndex - 1];
 
-                    updateArrayInstanciasProdutoEstoque(InstanciaProdutoEstoqueDAO.selectInstanciasProdutoEstoquePorEstoque(estoqueSelecionado.getIdEstoque()));
+                    updateArrayInstanciasProdutoEstoque(InstanciaProdutoEstoqueDAO.selectInstanciasProdutoEstoquePorEstoque(estoqueSelecionado.getIdEstoque(), false));
 
                     updateArrayMovimentacoes(MovimentacaoDAO.selectMovimentacoesPorEstoque(estoqueSelecionado.getIdEstoque()));
                 }
@@ -174,7 +177,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }
 
     public void setArrayInstanciasProdutoEstoqueTodosCadastrados() {
-        this.instanciasProdutoEstoqueNaTabela = InstanciaProdutoEstoqueDAO.getTodasInstanciasProdutoEstoque();
+        this.instanciasProdutoEstoqueNaTabela = InstanciaProdutoEstoqueDAO.getTodasInstanciasProdutoEstoque(false);
         comboBoxEstoque.setSelectedIndex(0);
     }
 
@@ -187,7 +190,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         model.setRowCount(0);
 
         for (InstanciaProdutoEstoque instancia : this.instanciasProdutoEstoqueNaTabela) {
-            model.addRow(instancia.getInstanciasProdutoEstoqueTableRow());
+            model.addRow(instancia.getInstanciasMovimentacaoTableRow());
         }
     }
 
@@ -245,12 +248,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         botaoNovaMovimentacao = new javax.swing.JButton();
         maisInfoMovimentacao = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tabelaInstanciasProdutoEstoque = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         tabelaMovimentacoes = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tabelaInstanciasProdutoEstoque = new javax.swing.JTable();
         relatorioPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -613,40 +616,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
                         .addGap(24, 24, 24)
                         .addComponent(comboBoxEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(botaoNovoEstoque)
-                            .addComponent(botaoMaisInfoEstoque, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(botaoNovoEstoque)
+                        .addComponent(botaoMaisInfoEstoque, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-
-        tabelaInstanciasProdutoEstoque.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
-        tabelaInstanciasProdutoEstoque.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Estoque", "Produto", "Quantidade", "Valor Total"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tabelaInstanciasProdutoEstoque.setAutoscrolls(false);
-        tabelaInstanciasProdutoEstoque.setPreferredSize(new java.awt.Dimension(250, 72));
-        jScrollPane2.setViewportView(tabelaInstanciasProdutoEstoque);
-        if (tabelaInstanciasProdutoEstoque.getColumnModel().getColumnCount() > 0) {
-            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(0).setPreferredWidth(260);
-            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(1).setPreferredWidth(360);
-            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(2).setPreferredWidth(90);
-            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(3).setPreferredWidth(125);
-        }
 
         jLabel7.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
         jLabel7.setText("Produtos no Estoque:");
@@ -672,6 +646,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         tabelaMovimentacoes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tabelaMovimentacoes.getTableHeader().setReorderingAllowed(false);
         jScrollPane5.setViewportView(tabelaMovimentacoes);
         if (tabelaMovimentacoes.getColumnModel().getColumnCount() > 0) {
             tabelaMovimentacoes.getColumnModel().getColumn(0).setPreferredWidth(100);
@@ -682,6 +657,32 @@ public class MenuPrincipal extends javax.swing.JFrame {
             tabelaMovimentacoes.getColumnModel().getColumn(5).setPreferredWidth(500);
         }
 
+        tabelaInstanciasProdutoEstoque.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
+        tabelaInstanciasProdutoEstoque.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Estoque", "Produto", "Quantidade", "Valor Total"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tabelaInstanciasProdutoEstoque.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(tabelaInstanciasProdutoEstoque);
+        if (tabelaInstanciasProdutoEstoque.getColumnModel().getColumnCount() > 0) {
+            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(0).setPreferredWidth(200);
+            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(1).setPreferredWidth(200);
+            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(2).setPreferredWidth(40);
+            tabelaInstanciasProdutoEstoque.getColumnModel().getColumn(3).setPreferredWidth(60);
+        }
+
         javax.swing.GroupLayout estoquesPanelLayout = new javax.swing.GroupLayout(estoquesPanel);
         estoquesPanel.setLayout(estoquesPanelLayout);
         estoquesPanelLayout.setHorizontalGroup(
@@ -690,13 +691,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
             .addGroup(estoquesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(estoquesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane5)
                     .addGroup(estoquesPanelLayout.createSequentialGroup()
                         .addGroup(estoquesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
                             .addComponent(jLabel9))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane5))
+                    .addComponent(jScrollPane3))
                 .addContainerGap())
         );
         estoquesPanelLayout.setVerticalGroup(
@@ -706,7 +707,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
@@ -820,6 +821,10 @@ public class MenuPrincipal extends javax.swing.JFrame {
         if (selectedRow >= 0) {
             if (movimentacoesNaTabela[selectedRow] instanceof EntradaProdutos) {
                 new MaisInfoMovimentacaoEntrada(this, (EntradaProdutos) movimentacoesNaTabela[selectedRow]).setVisible(true);
+            } else if (movimentacoesNaTabela[selectedRow] instanceof MovimentacaoEntreEstoques) {
+                new MaisInfoMovimentacaoEntreEstoques(this, (MovimentacaoEntreEstoques) movimentacoesNaTabela[selectedRow]).setVisible(true);
+            } else {
+                new MaisInfoMovimentacaoSaida(this, movimentacoesNaTabela[selectedRow].getIdMovimentacao()).setVisible(true);
             }
         } else {
             AuxFunctions.popup(
@@ -859,7 +864,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;

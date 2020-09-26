@@ -72,7 +72,7 @@ public class MovimentacaoDAO {
                                 rs.getDate("data")
                         );
                 }
-                
+
                 arrayListMovimentacao.add(movimentacao);
             }
 
@@ -84,19 +84,19 @@ public class MovimentacaoDAO {
         }
         return null;
     }
-    
+
     public static Movimentacao[] selectMovimentacoesPorEstoque(int idEstoque) {
         try {
             Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
-            
-            String sql = "SELECT * FROM Movimentacao WHERE idEstoqueOrigem = ? or idEstoqueDestino = ?"; 
+
+            String sql = "SELECT * FROM Movimentacao WHERE idEstoqueOrigem = ? or idEstoqueDestino = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            
+
             ps.setInt(1, idEstoque);
             ps.setInt(2, idEstoque);
-            
+
             ResultSet rs = ps.executeQuery();
-            
+
             ArrayList<Movimentacao> arrayListMovimentacao = new ArrayList<>();
 
             while (rs.next()) {
@@ -146,13 +146,85 @@ public class MovimentacaoDAO {
                                 rs.getDate("data")
                         );
                 }
-                
+
                 arrayListMovimentacao.add(movimentacao);
             }
 
             conn.close();
 
             return arrayListMovimentacao.toArray(new Movimentacao[0]);
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public static Movimentacao selectMovimentacaoPorId(int idMovimentacao) {
+        try {
+            Connection conn = DriverManager.getConnection(DAOPaths.connectionParam, DAOPaths.user, DAOPaths.password);
+
+            String sql = "SELECT * FROM Movimentacao WHERE idMovimentacao = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, idMovimentacao);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int tipoMovimentacao = rs.getInt("tipoMovimentacao");
+                Movimentacao movimentacao = null;
+
+                switch (tipoMovimentacao) {
+                    case 0:
+                        movimentacao = new SaidaProdutos(
+                                rs.getInt("idEstoqueOrigem"),
+                                rs.getInt("idMovimentacao"),
+                                rs.getDate("data"),
+                                rs.getInt("tipoMovimentacao")
+                        );
+                        break;
+                    case 1:
+                        movimentacao = new SaidaProdutos(
+                                rs.getInt("idEstoqueOrigem"),
+                                rs.getInt("idMovimentacao"),
+                                rs.getDate("data"),
+                                rs.getInt("tipoMovimentacao")
+                        );
+                        break;
+                    case 2:
+                        movimentacao = new MovimentacaoEntreEstoques(
+                                rs.getInt("idEstoqueOrigem"),
+                                rs.getInt("idEstoqueDestino"),
+                                rs.getInt("idMovimentacao"),
+                                rs.getDate("data"),
+                                rs.getInt("tipoMovimentacao")
+                        );
+                        break;
+                    case 3:
+                        movimentacao = new EntradaProdutos(
+                                -1,
+                                rs.getInt("idEstoqueDestino"),
+                                rs.getInt("tipoMovimentacao"),
+                                rs.getInt("idMovimentacao"),
+                                rs.getDate("data")
+                        );
+                    case 4:
+                        movimentacao = new EntradaProdutos(
+                                rs.getInt("idFornecedor"),
+                                rs.getInt("idEstoqueDestino"),
+                                rs.getInt("tipoMovimentacao"),
+                                rs.getInt("idMovimentacao"),
+                                rs.getDate("data")
+                        );
+                }
+                
+                conn.close();
+                
+                return movimentacao;
+            } else {
+                conn.close();
+                return null;
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
