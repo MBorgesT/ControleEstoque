@@ -258,6 +258,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Controle de Estoque");
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/produtos_48.png")).getImage());
         setResizable(false);
 
         tabbedPane.setTabPlacement(javax.swing.JTabbedPane.LEFT);

@@ -32,6 +32,7 @@ public class NovoEstoque extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Novo Estoque");
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("produtos_48.png")).getImage());
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Noto Sans", 1, 18)); // NOI18N

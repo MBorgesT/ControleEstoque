@@ -128,6 +128,7 @@ public class NovoProduto extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Novo Produto");
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("produtos_48.png")).getImage());
         setResizable(false);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(654, 720));
