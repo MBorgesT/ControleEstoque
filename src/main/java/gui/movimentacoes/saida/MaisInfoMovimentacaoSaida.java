@@ -110,6 +110,7 @@ public class MaisInfoMovimentacaoSaida extends javax.swing.JFrame {
         jLabel3.setText("Produtos retirados do estoque:");
 
         labelValorTotal.setFont(new java.awt.Font("Noto Sans", 1, 14)); // NOI18N
+        labelValorTotal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sigma_24.png"))); // NOI18N
         labelValorTotal.setText("Valor total:");
 
         campoValorTotal.setEditable(false);
@@ -166,14 +167,11 @@ public class MaisInfoMovimentacaoSaida extends javax.swing.JFrame {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
-                .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(formPanelLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(labelValorTotal))
-                    .addGroup(formPanelLayout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(campoValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                .addGap(24, 24, 24)
+                .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelValorTotal)
+                    .addComponent(campoValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
                 .addContainerGap())
         );

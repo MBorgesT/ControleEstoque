@@ -45,13 +45,13 @@ public class ProdutoValidator {
         campoValorPago = (JTextField) componentMap.get("campoValorPago");
         campoValorVenda = (JTextField) componentMap.get("campoValorVenda");
 
-        return (validarCamposVazios(campoDescricao, campoUnidadeMedida, campoQuantidadeEmbalagem)
+        return (validarCamposVazios(campoDescricao, campoUnidadeMedida, campoQuantidadeEmbalagem, campoValorPago, campoValorVenda)
                 && validarValoresNumericos(campoQuantidadeEmbalagem, campoValorPago, campoValorVenda)
                 && validarRadioButtonSelecionado(radioButtonSim, radioButtonNao)
                 && validarQuantidadeRelativaTabelaIngredientes(tabelaIngredientes));
     }
 
-    private static boolean validarCamposVazios(JTextField campoDescricao, JTextField campoUnidadeMedida, JTextField campoQuantidadeEmbalagem) {
+    private static boolean validarCamposVazios(JTextField campoDescricao, JTextField campoUnidadeMedida, JTextField campoQuantidadeEmbalagem, JTextField campoValorPago, JTextField campoValorVenda) {
         if (campoDescricao.getText().isEmpty()
                 || campoUnidadeMedida.getText().isEmpty()
                 || campoQuantidadeEmbalagem.getText().isEmpty()) {

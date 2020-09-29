@@ -68,7 +68,7 @@ public class EntradaProdutos extends Movimentacao {
         };
     }
 
-    private Estoque getEstoqueDestino() {
+    public Estoque getEstoqueDestino() {
         return EstoqueDAO.selectEstoquePorId(this.idEstoqueDestino);
     }
 
@@ -76,7 +76,7 @@ public class EntradaProdutos extends Movimentacao {
         return InstanciaProdutoMovimentacaoDAO.selectInstanciasProdutoMovimentacaoPorIdMovimentacao(this.getIdMovimentacao(), this.getTipoMovimentacao());
     }
 
-    private Fornecedor getFornecedor() {
+    public Fornecedor getFornecedor() {
         return FornecedorDAO.selectFornecedorPorId(this.idFornecedor);
     }
 

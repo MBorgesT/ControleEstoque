@@ -1,14 +1,12 @@
 alterar o sistema de alert das operações no banco pra não dar problemas em retornos booleanos
 
-checar strings em lower case na exibição em tabela de movimentações
-
-colocar valores unitários pagos e de venda do produto como obrigatórios
-
-não deixar alguém inserir na tabela de movimentações se um item já estiver lá
-
-fazer com que as telas de mais info puxem os dados das instancias na hora de abrir
 
 
+DONE - não deixar alguém inserir na tabela de movimentações se um item já estiver lá
+
+DONE - fazer com que as telas de mais info puxem os dados das instancias na hora de abrir
+
+DONE - checar strings em lower case na exibição em tabela de movimentações
 
 DONE - ordernar instanciasEstoque por idEstoque no menuPrincipal
 

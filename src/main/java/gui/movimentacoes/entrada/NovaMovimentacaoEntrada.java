@@ -48,7 +48,7 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
 
         comboBoxFornecedor.setEnabled(true);
         comboBoxFornecedor.setSelectedIndex(-1);
-        
+
         comboBoxEstoqueDestino.setSelectedIndex(-1);
 
         tabelaProdutosCadastrados.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -463,7 +463,7 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
         if (EntradaValidator.validate(formPanel) && AuxFunctions.popupConfirmacao("Confirmação", "Realmente deseja cadastrar esta entrada?")) {
             int idFornecedor = radioButtonSim.isSelected() ? todosFornecedores[comboBoxFornecedor.getSelectedIndex()].getIdFornecedor() : -1;
             int tipoMovimentacao = radioButtonSim.isSelected() ? 4 : 3;
-            
+
             EntradaProdutos novaEntrada = new EntradaProdutos(
                     idFornecedor,
                     todosEstoques[comboBoxEstoqueDestino.getSelectedIndex()].getIdEstoque(),
@@ -496,18 +496,18 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
                         "A entrada de produtos foi cadastrada com sucesso.",
                         JOptionPane.INFORMATION_MESSAGE
                 );
-                
+
                 menuPrincipal.setArrayInstanciasProdutoEstoqueTodosCadastrados();
                 menuPrincipal.preencherTabelaInstanciasProdutoEstoque();
-                
+
                 menuPrincipal.setArrayMovimentacoesTodasCadastradas();
                 menuPrincipal.preencherTabelaMovimentacoes();
 
                 this.dispose();
             } else {
                 AuxFunctions.popup(
-                        this, 
-                        "Erro", 
+                        this,
+                        "Erro",
                         "Houve algum erro ao cadastrar a entrada no banco de dados.\nFavorReiniciar o programa e tentar novamente.",
                         JOptionPane.ERROR_MESSAGE
                 );
@@ -534,10 +534,30 @@ public class NovaMovimentacaoEntrada extends javax.swing.JFrame {
         int selectedRow = tabelaProdutosCadastrados.getSelectedRow();
 
         if (selectedRow >= 0) {
-            produtosEntrada.add(produtosNaTabela[selectedRow]);
 
-            DefaultTableModel model = (DefaultTableModel) tabelaProdutosEntrada.getModel();
-            model.addRow(produtosNaTabela[selectedRow].getCadastroEntradaTableRow());
+            Produto novoProduto = produtosNaTabela[selectedRow];
+            boolean flag = true;
+            for (Produto produtoEntrada : produtosEntrada) {
+                if (novoProduto.getIdProduto() == produtoEntrada.getIdProduto()) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                produtosEntrada.add(novoProduto);
+
+                DefaultTableModel model = (DefaultTableModel) tabelaProdutosEntrada.getModel();
+                model.addRow(produtosNaTabela[selectedRow].getCadastroEntradaTableRow());
+            } else {
+                AuxFunctions.popup(
+                        this,
+                        "Atenção",
+                        "Este produto já está na tabela à direita.",
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
+
         } else {
             AuxFunctions.popup(
                     this,

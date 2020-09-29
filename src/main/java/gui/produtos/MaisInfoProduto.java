@@ -24,11 +24,11 @@ public class MaisInfoProduto extends javax.swing.JFrame {
 
     private boolean editando;
 
-    public MaisInfoProduto(MenuPrincipal menuPrincipal, Produto produto) {
+    public MaisInfoProduto(MenuPrincipal menuPrincipal, int idProduto) {
         initComponents();
 
         this.menuPrincipal = menuPrincipal;
-        this.produto = produto;
+        this.produto = ProdutoDAO.selectProdutoPorId(idProduto);
         this.todosProdutosCadastrados = ProdutoDAO.selectTodosProdutos();
         this.ingredientesNaTabela = new ArrayList<>();
         this.editando = false;
@@ -475,8 +475,8 @@ public class MaisInfoProduto extends javax.swing.JFrame {
                         .addComponent(botaoCalcularValorSugerido)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(formPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(campoValorVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel18))))
+                            .addComponent(jLabel18)
+                            .addComponent(campoValorVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         formPanelLayout.setVerticalGroup(
@@ -626,14 +626,14 @@ public class MaisInfoProduto extends javax.swing.JFrame {
                     .addComponent(labelId)
                     .addComponent(jLabel11))
                 .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(botaoEditarInfo)
                         .addGap(18, 18, 18)
                         .addComponent(botaoCancelarEdicao)
                         .addGap(394, 394, 394)
                         .addComponent(botaoExcluir))
-                    .addComponent(formPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(formPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 

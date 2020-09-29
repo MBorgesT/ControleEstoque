@@ -14,11 +14,11 @@ public class MaisInfoFornecedor extends javax.swing.JFrame {
     private Fornecedor fornecedor;
     private boolean editando;
 
-    public MaisInfoFornecedor(MenuPrincipal menuPrincipal, Fornecedor fornecedor) {
+    public MaisInfoFornecedor(MenuPrincipal menuPrincipal, int idFornecedor) {
         initComponents();
 
         this.menuPrincipal = menuPrincipal;
-        this.fornecedor = fornecedor;
+        this.fornecedor = FornecedorDAO.selectFornecedorPorId(idFornecedor);
         this.editando = false;
 
         preencherCampos();

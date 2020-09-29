@@ -756,7 +756,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         if (selectedRow >= 0) {
             Produto produto = produtosNaTabela[selectedRow];
-            new MaisInfoProduto(this, produto).setVisible(true);
+            new MaisInfoProduto(this, produto.getIdProduto()).setVisible(true);
         } else {
             AuxFunctions.popup(
                     this,
@@ -789,7 +789,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                     JOptionPane.INFORMATION_MESSAGE
             );
         } else {
-            new MaisInfoFornecedor(this, fornecedoresNoComboBox[selectedIndex - 1]).setVisible(true);
+            new MaisInfoFornecedor(this, fornecedoresNoComboBox[selectedIndex - 1].getIdFornecedor()).setVisible(true);
         }
     }//GEN-LAST:event_botaoMaisInfoFornecedorActionPerformed
 
@@ -820,9 +820,9 @@ public class MenuPrincipal extends javax.swing.JFrame {
         
         if (selectedRow >= 0) {
             if (movimentacoesNaTabela[selectedRow] instanceof EntradaProdutos) {
-                new MaisInfoMovimentacaoEntrada(this, (EntradaProdutos) movimentacoesNaTabela[selectedRow]).setVisible(true);
+                new MaisInfoMovimentacaoEntrada(this, movimentacoesNaTabela[selectedRow].getIdMovimentacao()).setVisible(true);
             } else if (movimentacoesNaTabela[selectedRow] instanceof MovimentacaoEntreEstoques) {
-                new MaisInfoMovimentacaoEntreEstoques(this, (MovimentacaoEntreEstoques) movimentacoesNaTabela[selectedRow]).setVisible(true);
+                new MaisInfoMovimentacaoEntreEstoques(this, movimentacoesNaTabela[selectedRow].getIdMovimentacao()).setVisible(true);
             } else {
                 new MaisInfoMovimentacaoSaida(this, movimentacoesNaTabela[selectedRow].getIdMovimentacao()).setVisible(true);
             }
